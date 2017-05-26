@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:id="@+id/main_layout"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:baselineAligned="false"
-              android:orientation="horizontal" >
+              android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="0"
         android:background="@drawable/tab_bg"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/map_layout"
@@ -19,20 +20,20 @@
             android:layout_height="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/map_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/unselected" />
+                tools:src="@drawable/map_unselect"/>
 
             <TextView
                 android:id="@+id/map_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="查看天气"
-                android:textColor="#ffffff" />
+                android:textColor="#ffffff"/>
         </LinearLayout>
 
         <LinearLayout
@@ -41,20 +42,20 @@
             android:layout_height="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/setting_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/unselected" />
+                tools:src="@drawable/admin_unselect"/>
 
             <TextView
                 android:id="@+id/setting_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="参数设置"
-                android:textColor="#ffffff" />
+                android:textColor="#ffffff"/>
         </LinearLayout>
 
         <LinearLayout
@@ -63,20 +64,20 @@
             android:layout_height="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/db_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/unselected" />
+                tools:src="@drawable/db_unselect"/>
 
             <TextView
                 android:id="@+id/db_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="历史消息"
-                android:textColor="#ffffff" />
+                android:textColor="#ffffff"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -84,7 +85,7 @@
         android:id="@+id/content"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1" >
+        android:layout_weight="1">
     </FrameLayout>
 
 </LinearLayout>

@@ -79,7 +79,7 @@ public class Param {
     public static boolean IsTyphonClear = false;
 
     // 用数组来存储天气类型,第一个索引手动赋值为0,类型从1开始的,我也是醉了...
-   /* public static final int[] weatherIcon = {R.drawable.w0, R.drawable.w1,
+    public static final int[] weatherIcon = {R.drawable.w0, R.drawable.w1,
             R.drawable.w2, R.drawable.w3, R.drawable.w4, R.drawable.w5,
             R.drawable.w6, R.drawable.w7, R.drawable.w8, R.drawable.w9,
             R.drawable.w10, R.drawable.w11, R.drawable.w12, R.drawable.w13,
@@ -89,7 +89,7 @@ public class Param {
             R.drawable.w26, R.drawable.w27, R.drawable.w28, R.drawable.w29,
             R.drawable.w30, R.drawable.w31, R.drawable.w32, R.drawable.w33,
             R.drawable.w34, R.drawable.w35, R.drawable.w36, R.drawable.w37,
-            R.drawable.w38};*/
+            R.drawable.w38};
 
 
     public static final String[] weatherName = {"",
@@ -163,7 +163,7 @@ public class Param {
     public static final int SHANDONG = 1;
     public static final int MAOMING = 2;
     public static final int ZHOUSHAN = 3;
-    
+
 
     //通过蓝牙模块获取固定气象局的全限，从1开始；
     // TODO: 2017/5/26 0026 一定要在应用的app的初始化部分，对下面两个变脸进行初始化，否则空指针异常；
@@ -178,6 +178,12 @@ public class Param {
     public static final int MAOMING_1 = 2;
     public static final int ZHOUSHAN_0 = 3;
 
-    public static final int VP_CURRENT_POSITION = 0;
+    //ViewPager中展示的是哪个地图
+    public static int VP_CURRENT_POSITION;
+
+    //本机当前所在的地区
+    public static int AREA;
+    //当前区域的
+    public static int AREA_NO;
 
 }
