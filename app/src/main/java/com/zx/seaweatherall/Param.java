@@ -22,14 +22,7 @@ public class Param {
 
     public static boolean T_SWiTCH;
 
-    // 用来在MapFragment的右侧存气象局发来的消息.
-//    public static List<Msg> MSGList = new ArrayList<Msg>();
-
-    // ----------------参数设置文件中的VALUE-----------------------
-
-    // 用户ID
-//    public static int mUsrID;
-
+    public static String CONFIGNAME = "fenghuo";
     // 有效期
     public static String mDate;
 
@@ -67,15 +60,6 @@ public class Param {
     // 数据传输速率
     public static String mDTR;
 
-    // 配置文件类
-//    public static Perf perf;
-
-    // 不用map存储天气类型了
-    /*
-     * public static final Map<Integer, Integer> weatherTypeMap = new
-	 * HashMap<Integer, Integer>(){ { put(1, R.drawable.d00); put(2,
-	 * R.drawable.d01); } };
-	 */
     public static boolean IsTyphonClear = false;
 
     // 用数组来存储天气类型,第一个索引手动赋值为0,类型从1开始的,我也是醉了...
@@ -119,14 +103,6 @@ public class Param {
     //默认自动拆链时间是60分钟
     public static volatile int unlinkTime = 60;
 
-    public static int tmpDBCount;
-    /*public static int tmpDBCount = 0;
-    public static int tmpDBCount = 0;
-    public static int tmpDBCount = 0;*/
-    public static boolean db1 = true;
-    public static boolean db2 = true;
-    public static boolean db3 = true;
-
     public static boolean totalFlag = true;
 
     //PC端图片的大小;
@@ -136,9 +112,9 @@ public class Param {
     public final static double ACTUAL_IMAGE_SIZE = 800.0;
 
 
-    public static int my_area = 2;
-    public static int my_group = 1;
-    public static int my_id = 100;
+    public static int my_area = 0;
+    public static int my_group = 0;
+    public static int my_id = 0;
     public static int my_authority = 0;
 
     //由于天气和台风合并在一起发， 这里为了区分是天气还台风，做了一个标示；
@@ -165,18 +141,20 @@ public class Param {
     public static final int ZHOUSHAN = 3;
 
 
-    //通过蓝牙模块获取固定气象局的全限，从1开始；
-    // TODO: 2017/5/26 0026 一定要在应用的app的初始化部分，对下面两个变脸进行初始化，否则空指针异常；
-    public static boolean[] AUTHORITY = new boolean[4];
-    public static ArrayList<Integer> MAP_PIC = new ArrayList<>();
-    public static HashMap<Integer, Integer> map2position = new HashMap<>();
-
-
     //哪个单位用,1为山东、2为茂名、3为舟山。
     public static final int SHANDONG_0 = 0;
     public static final int MAOMING_0 = 1;
     public static final int MAOMING_1 = 2;
     public static final int ZHOUSHAN_0 = 3;
+
+    //通过蓝牙模块获取固定气象局的全限，从1开始；
+    //作用是在接受消息时，先检查权限，不是的话，直接不解析，返回null；索引值下标为：1,2,3；分别对应三个地区（SHANDONG。。）
+    public static boolean[] AUTHORITY = new boolean[4];
+    public static ArrayList<Integer> MAP_PIC = new ArrayList<>();
+    //使用场景，如果接受到某一地点的气象，需要切换到对应地图，索引为地区（SHANDONG_0。。。），值为ViewPager中的position；
+    public static HashMap<Integer, Integer> map2position = new HashMap<>();
+
+
 
     //ViewPager中展示的是哪个地图
     public static int VP_CURRENT_POSITION;

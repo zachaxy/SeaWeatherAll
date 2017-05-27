@@ -26,6 +26,7 @@ import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 import com.zx.seaweatherall.Param;
 import com.zx.seaweatherall.R;
+import com.zx.seaweatherall.utils.ACache;
 import com.zx.seaweatherall.utils.BytesUtil;
 import com.zx.seaweatherall.utils.Protocol;
 import com.zx.seaweatherall.utils.SymEncrypt;
@@ -100,7 +101,6 @@ public class FirstActivity extends AppCompatActivity {
 
         //查找设备
         findSerialPortDevice();
-
 
 
     }
@@ -404,64 +404,37 @@ public class FirstActivity extends AppCompatActivity {
     }
 
     /***
-     * 打开所需的两个串口
-     */
-    /*private void openComs() {
-        Serial.openCom1();
-        Serial.openCom3();
-        Log.d(TAG, "openSerials: 通信串口已经打开");
-        tv2.setText("通信串口已经打开");
-        img2.setImageResource(R.drawable.ok);
-    }*/
-
-    /***
      * 初始化配置文件,以收集参数信息
      */
 
     private void initConf() {
-        //Param.perf = new Perf(FirstActivity.this);
-        /*if (Param.perf==null) {
-            Param.perf = new Perf(getApplicationContext());
-        }
-        Param.perf.readAll();*/
-        //改在这里使用假的数据模拟读取配置文件：参数设置配置文件
-        SharedPreferences sp = getSharedPreferences("PARAMSETTING", Context.MODE_PRIVATE);
+
+        SharedPreferences sp = getSharedPreferences(Param.CONFIGNAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putInt("P_SOUNDS", 18);
-        editor.commit();
         editor.putBoolean("P_SOUND", true);
-        editor.commit();
+        editor.apply();
 
         Param.mSounds = sp.getInt("P_SOUNDS", 18);
         Param.mOffSet = sp.getString("P_OFFSET", "180");
         Param.mSound = sp.getBoolean("P_SOUND", true);
         Param.mSoundExtent = sp.getInt("P_EXTENT", 0);
 
-        ArrayList<String> channlesList = new ArrayList<String>();
-        channlesList.add(sp.getString("P_CHANNEL0", "10.0000"));
-        channlesList.add(sp.getString("P_CHANNEL1", "10.0000"));
-        channlesList.add(sp.getString("P_CHANNEL2", "10.0000"));
-        channlesList.add(sp.getString("P_CHANNEL3", "10.0000"));
-        channlesList.add(sp.getString("P_CHANNEL4", "10.0000"));
-        channlesList.add(sp.getString("P_CHANNEL5", "10.0000"));
-        channlesList.add(sp.getString("P_CHANNEL6", "10.0000"));
-        channlesList.add(sp.getString("P_CHANNEL7", "10.0000"));
-        channlesList.add(sp.getString("P_CHANNEL8", "10.0000"));
-        channlesList.add(sp.getString("P_CHANNEL9", "10.0000"));
+        ACache aCache = ACache.get(this);
+        ArrayList<String> channlesList = (ArrayList<String>) aCache.getAsObject("channlesList");
+        if (channlesList==null){
+            channlesList = new ArrayList<>();
+            for (int i = 0; i < 10; i++) {
+                channlesList.add("10.0000");
+            }
+        }
         Param.mChannels = channlesList;
 
-        Param.my_area = sp.getInt("P_USERID", 2);
+ /*       Param.my_area = sp.getInt("P_USERID", 2);
         Param.my_group = sp.getInt("P_USERID", 1);
-        Param.my_id = sp.getInt("P_USERID", 100);
+        Param.my_id = sp.getInt("P_USERID", 100);*/
 
         Param.unlinkTime = sp.getInt("P_UNLINKTIME", 60);
-
-        String tmpData = sp.getString("P_DATE", "000000000000");
-        if (!tmpData.equals("000000000000")) {
-            tmpData =  SymEncrypt.decrypt(tmpData, Param.PERF_PASSWORD);
-        }
-        //mData中保存的是long的类型；
-        Param.mDate = tmpData;
 
         tv1.setText("初始化配置文件完成");
         img1.setImageResource(R.drawable.ok);

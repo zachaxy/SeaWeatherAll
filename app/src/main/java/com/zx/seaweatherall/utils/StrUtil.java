@@ -86,32 +86,7 @@ public class StrUtil {
     }
 
 
-    /** TODO:depresd
-     * @param hexString
-     * @param n
-     * @return
-     */
-    /*public static byte[] hexStringToBytes(String hexString, int n) {
-        if (hexString == null || hexString.equals("")) {
-            return null;
-        }
-        hexString = hexString.toUpperCase();
-        if (hexString.length() % 2 == 1) {
-            hexString = "0" + hexString;
-        }
-        int length = hexString.length() / 2;
-        char[] hexChars = hexString.toCharArray();
-        byte[] d1 = new byte[length];
-        for (int i = 0; i < length; i++) {
-            int pos = i * 2;
-            d1[i] = (byte) (charToByte(hexChars[pos]) << 4 | charToByte(hexChars[pos + 1]));
-        }
-        byte[] d2 = new byte[n - length];
-        byte[] d = new byte[n];
-        System.arraycopy(d2, 0, d, 0, d2.length);
-        System.arraycopy(d1, 0, d, d2.length, d1.length);
-        return d;
-    }*/
+
 
 
     /**
@@ -458,78 +433,7 @@ public class StrUtil {
         return tail;
     }
 
-    /**
-     * crc校验
-     *
-     * @param bs
-     * @param oCrc
-     * @return
-     */
-    private static boolean checkCRC(byte[] bs, byte[] oCrc) {
-        int crc = 0;
-        char c;
-        int len = bs.length;
-        int j = 0;
-        while (len-- != 0) {
-            for (c = 0x80; c != 0; c /= 2) {
-                if ((crc & 0x8000) != 0) {
-                    crc *= 2;
-                    crc ^= 0x1021;
-                } else {
-                    crc *= 2;
-                }
 
-                if ((bs[j] & c) != 0) {
-                    crc ^= 0x1021;
-                }
-            }
-            j++;
-        }
-
-        // String oCrc1 = BytesUtil.bytesToHexString(oCrc);
-        // int oCrc1 = oCrc[0]*256+oCrc[1];
-        int oCrc1 = ((oCrc[0] + 256) % 256) * 256 + (oCrc[1] + 256) % 256;
-        if (crc < 0) {
-            crc = (crc + Integer.MAX_VALUE + 1) % (Integer.MAX_VALUE + 1);
-        }
-        return (crc % 65536) == (oCrc1);
-    }
-
-    /**
-     * @param bs
-     * @return
-     */
-    private static boolean checkCRC(byte[] bs) {
-        int crc = 0;
-        char c;
-        int len = bs.length - 2;
-        int j = 0;
-        while (len-- != 0) {
-            for (c = 0x80; c != 0; c /= 2) {
-                if ((crc & 0x8000) != 0) {
-                    crc *= 2;
-                    crc ^= 0x1021;
-                } else {
-                    crc *= 2;
-                }
-
-                if ((bs[j] & c) != 0) {
-                    crc ^= 0x1021;
-                }
-            }
-            j++;
-        }
-
-        byte[] bb = new byte[2];// 用来存放传入的字节数组的原始校验和
-        bb[0] = bs[bs.length - 2];
-        bb[1] = bs[bs.length - 1];
-        // int oCrc = bb[0]*256+bb[1];
-        int oCrc = ((bb[0] + 256) % 256) * 256 + (bb[1] + 256) % 256;
-        if (crc < 0) {
-            crc = (crc + Integer.MAX_VALUE + 1) % (Integer.MAX_VALUE + 1);
-        }
-        return (crc % 65536) == (oCrc);
-    }
 
     public static String parseTimeInMSG(byte[] b) {
         int year = b[0];

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/fl_map"
+        android:layout_width="800px"
+        android:layout_height="800px">
+
+
+        <FrameLayout
+            android:id="@+id/fl_big_area"
+            android:layout_width="800px"
+            android:layout_height="800px">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/vp_pics"
+                android:layout_width="800px"
+                android:layout_height="800px">
+
+            </android.support.v4.view.ViewPager>
+
+            <LinearLayout
+                android:id="@+id/ll_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_small_area"
+            android:layout_width="800px"
+            android:layout_height="800px"
+            android:visibility="gone">
+
+            <com.zx.seaweatherall.widget.ZoomImageView
+                android:id="@+id/zimg_small_fish_area"
+                android:layout_width="800px"
+                android:layout_height="800px"
+                android:background="@color/colorPrimaryDark"
+                />
+
+            <ImageView
+                android:id="@+id/iv_close_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:src="@drawable/close"/>
+
+        </FrameLayout>
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/img_divider1"
+        android:layout_width="5dp"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/fl_map"
+        android:background="#a7a4a4"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/img_divider1"
+        android:background="#8ef7eb"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_clear_typhoon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/clear_typhoon" />
+
+            <ImageView
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="#000000"/>
+
+            <ImageButton
+                android:id="@+id/ib_sounds"
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:background="#8ef7eb"
+                android:src="@drawable/sounds"/>
+
+            <ImageView
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="#000000"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:gravity="center"
+                android:text="信道号:"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/tv_xindaohao"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="扫描中"
+                android:textSize="18sp"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#a7a4a4"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="信道速率:"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/tv_xindaosulv"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="18sp"/>
+
+            <ImageView
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#a7a4a4"/>
+
+
+            <ImageView
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#a7a4a4"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:gravity="center"
+                android:text="信噪比:"
+                android:textSize="18sp"
+                />
+
+            <TextView
+                android:id="@+id/tv_xinzaobi"
+                android:layout_width="65dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="18sp"/>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#a7a4a4"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="有效期: "
+                android:textColor="#ff0000"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="00-00-1511"/>
+        </LinearLayout>
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#a7a4a4"/>
+        <!-- 注释..... -->
+        <com.zx.seaweatherall.widget.MarqueenTextView
+            android:id="@+id/mtv_new_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:text="DR-II型短波全数字化气象接收机"
+            android:textSize="60sp"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#a7a4a4"/>
+
+        <ListView
+            android:id="@+id/lv_msg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+
+</RelativeLayout>

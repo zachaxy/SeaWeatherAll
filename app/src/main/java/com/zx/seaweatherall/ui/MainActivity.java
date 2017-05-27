@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (index) {
             case 0:
                 if (Param.AREA_NO > 0) {
-                    mapFragment.zoomImageView.showPopupWindowOnly(Param.AREA_NO);
+//                    mapFragment.zoomImageView.showPopupWindowOnly(Param.AREA_NO);
                 }
                 mapImage.setImageResource(R.drawable.map_select);
                 if (mapFragment == null) {
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case 1:
-                mapFragment.zoomImageView.dismissPopupWindow();
+//                mapFragment.zoomImageView.dismissPopupWindow();
                 settingImage.setImageResource(R.drawable.admin_select);
                 if (settingFragment == null) {
                     settingFragment = new SettingFragment();
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case 2:
-                mapFragment.zoomImageView.dismissPopupWindow();
+//                mapFragment.zoomImageView.dismissPopupWindow();
                 dbImage.setImageResource(R.drawable.db_select);
                 if (dbFragment == null) {
                     dbFragment = new DBFragment();
@@ -214,7 +214,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }*/
 
 
-    //实现全屏效果
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -249,8 +248,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         mapFragment.tts.stop();
                         mapFragment.tts.shutdown();
-                        mapFragment.mReadThread.stopReadThread();
-                        mapFragment.mParseParamThread.stopParseParamThread();
+//                        mapFragment.mReadThread.stopReadThread();
+//                        mapFragment.mParseParamThread.stopParseParamThread();
                         Param.totalFlag = false;
                         //考虑在这里调用是不是无法快速执行;
                         /*saveAreaNo();
