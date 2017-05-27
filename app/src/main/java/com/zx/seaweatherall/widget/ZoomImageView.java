@@ -4,18 +4,36 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.speech.tts.TextToSpeech;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
+
+import com.zx.seaweatherall.Param;
+import com.zx.seaweatherall.R;
+import com.zx.seaweatherall.bean.Locater;
+import com.zx.seaweatherall.bean.Locator2;
+import com.zx.seaweatherall.bean.TyphoonBean;
+import com.zx.seaweatherall.bean.WeatherBean;
+import com.zx.seaweatherall.ui.MapFragment;
+import com.zx.seaweatherall.utils.BytesUtil;
+import com.zx.seaweatherall.utils.Tools;
 
 import java.io.InputStream;
 
@@ -57,6 +75,17 @@ public class ZoomImageView extends ImageView implements
     private int postDelayTime = 8;
 
 
+    public WeatherBean weather;
+    public TyphoonBean typhoon;
+
+    //点击时弹出详细信息的窗口
+    PopupWindow popupWindow;
+    //弹出popupwindow的view
+    View detailContent;
+
+    //gps显示部分
+    public Locator2 currentLocation = new Locator2(0, 0);//相对于中心点的坐标;
+
     public ZoomImageView(Context context) {
         this(context, null);
     }
@@ -68,12 +97,8 @@ public class ZoomImageView extends ImageView implements
     public ZoomImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         // init();
-        //Bitmap bitmap = readBitMap(getContext(), R.drawable.t3);
 
         paint = new Paint();
-        // path = new Path();
-
-        //this.setImageBitmap(bitmap);
 
         mScaleMatrix = new Matrix();
         setScaleType(ScaleType.MATRIX);
@@ -103,6 +128,57 @@ public class ZoomImageView extends ImageView implements
                         }
                         return true;
                     }
+
+                    //单击确定,用来实现点击指定区域,显示对应区域坐标;
+                    /*@Override
+                    public boolean onSingleTapConfirmed(MotionEvent e) {
+                        boolean inFlag = false;
+                        float downX = e.getX();
+                        float downY = e.getY();
+                        //将按下的点坐标转换成int类型的,用来计算区域吧;
+                        Locater lo = getOrignalLocation(downX, downY);
+
+                        //遍历18个区域,看是落在哪个区域中;
+                        for (int i = 0; i < Param.seaAreas2.length; i++) {
+                            if (Tools.pInQuadrangle(Param.seaAreas2[i], lo)) {
+                                dismissPopupWindow(); //可能存在的情况是:我之前点击了1,正在显示,现在我又点击了2,那么我就让之前的消失掉;
+                                TextView area = (TextView) detailContent.findViewById(R.id.detail_popup_tv_area);
+                                area.setText(Param.AREA_NAME[i]);
+                                ImageView img = (ImageView) detailContent.findViewById(R.id.detail_popup_img_weather_type);
+                                img.setImageBitmap(Param.bitmaps[Param.weaherDetail[i].weatherType]);
+                                TextView tv_type = (TextView) detailContent.findViewById(R.id.detail_popup_tv_weather_type);
+                                tv_type.setText(Param.weatherName[Param.weaherDetail[i].weatherType]);
+                                TextView tv_wind = (TextView) detailContent.findViewById(R.id.detail_popup_tv_weather_wind);
+                                tv_wind.setText(Param.weaherDetail[i].wind_power);
+                                TextView time = (TextView) detailContent.findViewById(R.id.detail_popup_tv_weather_time);
+                                time.setText("发布时间:" + BytesUtil.formatTime(Param.weaherDetail[i].time.toCharArray()));
+                                popupWindow = new PopupWindow(detailContent, -2, -2);
+                                //需要注意的是:使用popupwindow,必须设置背景,不然动画效果不能展示
+                                popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                //传入一个长度为2的数组,将返回该view距离屏幕x,y的距离
+                                //int[] location = new int[2];
+                                //view.getLocationInWindow(location);
+                                popupWindow.showAtLocation(ZoomImageView.this, Gravity.LEFT + Gravity.TOP, (int) e.getX(), (int) e.getY());
+
+                                ScaleAnimation animation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                                animation.setDuration(300);
+                                detailContent.startAnimation(animation);
+                                inFlag = true;
+                                //添加语音读功能;
+                                MapFragment.tts.speak(Param.AREA_NAME[i] + Param.seperator +
+                                                Param.weatherName[Param.weaherDetail[i].weatherType] + Param.seperator +
+                                                Param.weaherDetail[i].wind_power + "," + Param.seperator +
+                                                Param.weaherDetail[i].text,
+                                        TextToSpeech.QUEUE_FLUSH, null);
+                                break;
+                            }
+                        }
+
+                        if (!inFlag) { //如果是其他区域,那么也将这个windown取消掉;
+                            dismissPopupWindow();
+                        }
+                        return super.onSingleTapConfirmed(e);
+                    }*/
                 });
     }
 
@@ -494,20 +570,89 @@ public class ZoomImageView extends ImageView implements
 
     }
 
-    /*
-    使用Glide直接加载，不使用原生的方法加载了；
-    */
-    @Deprecated
-    public static Bitmap readBitMap(Context context, int resId) {
 
-        BitmapFactory.Options opt = new BitmapFactory.Options();
-        opt.inPreferredConfig = Bitmap.Config.RGB_565;
-        opt.inPurgeable = true;
-        opt.inInputShareable = true;
-        // 获取资源图片
-        InputStream is = context.getResources().openRawResource(resId);
-        return BitmapFactory.decodeStream(is, null, opt);
+    //根据缩放按下的坐标,还原会为缩放时的坐标;不是相对于中心点的;
+    public Locater getOrignalLocation(float x, float y) {
+        RectF matrixRectF = getMatrixRectF();
+        float currentScale = (matrixRectF.right - matrixRectF.left) / getWidth();
+        int x0 = (int) ((x - matrixRectF.centerX()) / currentScale + Param.ACTUAL_IMAGE_SIZE / 2);
+        int y0 = (int) ((y - matrixRectF.centerY()) / currentScale + Param.ACTUAL_IMAGE_SIZE / 2);
+        return new Locater(x0, y0);
+    }
 
+/*    //显示指定海区的坐标;传入的是海区的x,y位置;
+    public void showPopupWindow(int i) {
+        dismissPopupWindow(); //可能存在的情况是:我之前点击了1,正在显示,现在我又点击了2,那么我就让之前的消失掉;
+        TextView area = (TextView) detailContent.findViewById(R.id.detail_popup_tv_area);
+        area.setText(Param.AREA_NAME[i]);
+        ImageView img = (ImageView) detailContent.findViewById(R.id.detail_popup_img_weather_type);
+        img.setImageBitmap(Param.bitmaps[Param.weaherDetail[i].weatherType]);
+        TextView tv_type = (TextView) detailContent.findViewById(R.id.detail_popup_tv_weather_type);
+        tv_type.setText(Param.weatherName[Param.weaherDetail[i].weatherType]);
+        TextView tv_wind = (TextView) detailContent.findViewById(R.id.detail_popup_tv_weather_wind);
+        tv_wind.setText(Param.weaherDetail[i].wind_power);
+        TextView time = (TextView) detailContent.findViewById(R.id.detail_popup_tv_weather_time);
+        time.setText("发布时间:" + BytesUtil.formatTime(Param.weaherDetail[i].time.toCharArray()));
+        popupWindow = new PopupWindow(detailContent, -2, -2);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        RectF rectF = getMatrixRectF();
+        float currentScale = (rectF.right - rectF.left) / getWidth();
+        int x = (int) (rectF.centerX() + currentLocation.x * currentScale);
+        int y = (int) (rectF.centerY() + currentLocation.y * currentScale);
+        //rect.centerX() + (float) currentLocation.x * currentScale
+        popupWindow.showAtLocation(ZoomImageView.this, Gravity.LEFT + Gravity.TOP, x, y);
+
+        ScaleAnimation animation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        animation.setDuration(300);
+        detailContent.startAnimation(animation);
+        MapFragment.tts.speak(Param.AREA_NAME[i] + Param.seperator +
+                        Param.weatherName[Param.weaherDetail[i].weatherType] + Param.seperator +
+                        Param.weaherDetail[i].wind_power + "," +
+                        Param.weaherDetail[i].text,
+                TextToSpeech.QUEUE_FLUSH, null);
+    }*/
+
+
+
+/*    //显示指定海区的坐标;传入的是海区的x,y位置;与上一个方法的区别是只显示window,不speak;
+    public void showPopupWindowOnly(int i) {
+        dismissPopupWindow(); //可能存在的情况是:我之前点击了1,正在显示,现在我又点击了2,那么我就让之前的消失掉;
+        TextView area = (TextView) detailContent.findViewById(R.id.detail_popup_tv_area);
+        area.setText(Param.AREA_NAME[i]);
+        ImageView img = (ImageView) detailContent.findViewById(R.id.detail_popup_img_weather_type);
+        img.setImageBitmap(Param.bitmaps[Param.weaherDetail[i].weatherType]);
+        TextView tv_type = (TextView) detailContent.findViewById(R.id.detail_popup_tv_weather_type);
+        tv_type.setText(Param.weatherName[Param.weaherDetail[i].weatherType]);
+        TextView tv_wind = (TextView) detailContent.findViewById(R.id.detail_popup_tv_weather_wind);
+        tv_wind.setText(Param.weaherDetail[i].wind_power);
+        TextView time = (TextView) detailContent.findViewById(R.id.detail_popup_tv_weather_time);
+        time.setText("发布时间:" + BytesUtil.formatTime(Param.weaherDetail[i].time.toCharArray()));
+        popupWindow = new PopupWindow(detailContent, -2, -2);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        RectF rectF = getMatrixRectF();
+        float currentScale = (rectF.right - rectF.left) / getWidth();
+        int x = (int) (rectF.centerX() + currentLocation.x * currentScale);
+        int y = (int) (rectF.centerY() + currentLocation.y * currentScale);
+        //rect.centerX() + (float) currentLocation.x * currentScale
+        popupWindow.showAtLocation(ZoomImageView.this, Gravity.LEFT + Gravity.TOP, x, y);
+
+        ScaleAnimation animation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        animation.setDuration(300);
+        detailContent.startAnimation(animation);
+*//*        MapFragment.tts.speak(Param.AREA_NAME[i] + Param.seperator +
+                        Param.weatherName[Param.weaherDetail[i].weatherType] + Param.seperator +
+                        Param.weaherDetail[i].wind_power + "," +
+                        Param.weaherDetail[i].text,
+                TextToSpeech.QUEUE_FLUSH, null);*//*
+    }*/
+
+
+    //取消popupwindow的显示,适用场景在放大或者移动的过程中.
+    public void dismissPopupWindow() {
+        if (popupWindow != null && popupWindow.isShowing()) {
+            popupWindow.dismiss();
+            popupWindow = null;
+        }
     }
 
     //将之前滑过的图片还原为原始大小；
