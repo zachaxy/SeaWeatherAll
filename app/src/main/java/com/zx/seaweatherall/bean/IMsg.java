@@ -11,7 +11,12 @@ import com.zx.seaweatherall.Param;
 
 public class IMsg {
 
+    public IMsg(String timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
     public String content;
+    public String timeStamp;
 
     public void setContent(String content) {
         this.content = content;
@@ -20,6 +25,14 @@ public class IMsg {
     //获取天气的文字描述,在右侧显示;
     public String getMsgContent() {
         return content;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     //获取天气的类型是台风还是天气;

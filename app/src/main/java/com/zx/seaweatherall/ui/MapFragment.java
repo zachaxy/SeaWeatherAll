@@ -64,6 +64,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.zx.seaweatherall.Param.IsTyphonClear;
 import static com.zx.seaweatherall.Param.SHANDONG;
 
 
@@ -843,7 +844,7 @@ public class MapFragment extends Fragment {
         }
     }
 
-    //不断从消息池中提取
+    //不断从消息池中提取拼接好的信息或者等待超时提取信息
     public class ExtractAppThread extends Thread {
 
         private AtomicBoolean working = new AtomicBoolean();
@@ -1197,7 +1198,7 @@ public class MapFragment extends Fragment {
             }
             // TODO: 2017/5/2 0002 单独弄一个 overall weather bean 来实现 IMsg接口返回行不行? 可以吧;
 
-            IMsg iimsg = new IMsg();
+            IMsg iimsg = new IMsg(timeStamp);
             iimsg.setContent(content);
             return iimsg;
         }
@@ -1811,6 +1812,15 @@ public class MapFragment extends Fragment {
         }
     }
 
+    private String formatWeathers() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < areaLists.size(); i++) {
+//            sb.append("")
+        }
+
+        return sb.toString();
+    }
+
     /* 将进行转换msg.obj
          zoomImageView.invalidate();
          11:短信+商务信息；
@@ -1856,13 +1866,13 @@ public class MapFragment extends Fragment {
                     Log.e("###setting", "收到的注册时间是:" + date_text);
                     date.setText(date_text);
                     break;
-                case 15:  //气象信息,台风;
+                case 15:  //TODO:气象信息,台风;目前只是在右侧显示了，还没有在左侧界面显示；
                     if (iMsg.getMsgType() == Param.type_typhooon) {
                         TyphoonBean bean = (TyphoonBean) iMsg;
                         addRecentMsg(new RecentMsg(R.drawable.w38, bean.getMsgContent(), bean.timeStamp));
 
-                    } else {
-
+                    } else { //气象信息，多组的，需要重新拼装一下信息；注意，所有的消息都在全局变量的二维数组中；
+                        addRecentMsg(new RecentMsg(R.drawable.w1, formatWeathers(), iMsg.getTimeStamp()));
                     }
                     break;
                 case 16:
