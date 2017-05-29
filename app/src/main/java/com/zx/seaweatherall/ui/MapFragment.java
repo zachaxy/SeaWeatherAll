@@ -135,6 +135,8 @@ public class MapFragment extends Fragment {
     // 等待生成天气后在动态生成对象.
     IMsg iMsg;
     WeatherBean[][] weathers;
+    //用来接收分组情况的具体信息;
+    ArrayList<ArrayList<Integer>> lists = new ArrayList<>();
 
     RecentMsg msgBean;
 
@@ -188,6 +190,9 @@ public class MapFragment extends Fragment {
         cBi = (TextView) view.findViewById(R.id.tv_xinzaobi);
 
         date = (TextView) view.findViewById(R.id.tv_date);
+        char[] c = Param.mDate.toCharArray();
+        String date_text = BytesUtil.formatTime4UI(c);
+        date.setText(date_text);
 
         mNewMsg = (MarqueenTextView) view.findViewById(R.id.mtv_new_msg);
 
@@ -926,7 +931,7 @@ public class MapFragment extends Fragment {
         Log.e(TAG, "消息类型:" + infoType);
         switch (infoType) {
             case MSG:
-                msgBean = parseMsg(timeStamp, b, false);
+                msgBean = parseMsg(timeStamp, b);
                 if (msgBean != null) {
                     h1.sendEmptyMessage(11);
                 }
@@ -945,7 +950,7 @@ public class MapFragment extends Fragment {
                 break;
             case BUSINESS_MSG:
                 //解析商务信息，这个和普通信息没有什么区别吧。。。
-                msgBean = parseMsg(timeStamp, b, true);
+                msgBean = parseBMsg(timeStamp, b);
                 if (msgBean != null) {
                     h1.sendEmptyMessage(11);
                 }
@@ -972,8 +977,36 @@ public class MapFragment extends Fragment {
         }
     }
 
+    private RecentMsg parseBMsg(String timeStamp, byte[] data) {
+        int msgIndex = 1;
+        int company = data[msgIndex++];
+
+        //判定有效期
+        if (Long.valueOf(timeStamp) > Long.valueOf(Param.mDate)) {
+            Log.d(TAG, "parseMsg: 商务信息，过期");
+            return null;
+        }
+
+        //判定权限
+        if (!Param.AUTHORITY[company]) {
+            Log.d(TAG, "parseMsg: 无权限");
+            return null;
+        }
+
+        String ordinaryMSG = "商务信息";
+        try {
+            ordinaryMSG += new String(data, msgIndex, data.length - msgIndex, "gbk");
+        } catch (UnsupportedEncodingException e) {
+            Log.e("###", "短消息中的类型不能解析为中文");
+        }
+
+        int imgID = R.drawable.business_msg_unread;
+        return new RecentMsg(imgID, ordinaryMSG, timeStamp);
+
+    }
+
     //注意,有可能会返回null; 商务信息没有电话号码；
-    private RecentMsg parseMsg(String timeStamp, byte[] data, boolean isBusiness) {
+    private RecentMsg parseMsg(String timeStamp, byte[] data) {
         int msgIndex = 1;//从1开始,0代表的是消息类型,之前已经解析过了;
         int phoneLen = 7;
         //+86 13812345678 ==> 0x86 0x13 0x81 0x23 0x45 0x67 0x8F
@@ -987,16 +1020,7 @@ public class MapFragment extends Fragment {
 
         int groupCount = data[msgIndex++];//如果为0就代表是单发,后面的ID就是接受的ID;否则就是群发的组数
 
-        //先判断是不是商务信息；
-        if (isBusiness) {
-            //直接跳过后面三个字节的id号
-            msgIndex += 3;
-            //对比一下事件是否过期
-            if (Long.valueOf(timeStamp) > Long.valueOf(Param.mDate)) {
-                Log.d(TAG, "parseMsg: 商务信息，过期");
-                return null;
-            }
-        } else if (groupCount == 0) {//不是商务信息，单发的情况
+        if (groupCount == 0) {//不是商务信息，单发的情况
             /*
             第一个字节表示当前接收机所属的地区，1为山东、2为茂名、3为舟山、4为山东和茂名通用、
             5为山东舟山通用、6为茂名舟山通用、7为山东舟山茂名通用；
@@ -1045,7 +1069,7 @@ public class MapFragment extends Fragment {
             Log.e("###", "短消息中的类型不能解析为中文");
         }
 
-        int imgID = isBusiness ? R.drawable.business_msg_unread : R.drawable.msg_unread;
+        int imgID = R.drawable.msg_unread;
         return new RecentMsg(imgID, ordinaryMSG, timeStamp);
     }
 
@@ -1066,6 +1090,10 @@ public class MapFragment extends Fragment {
             //如果不是特殊天气，先在这里验证一下有效期，如果无效，直接返回
             if (!isSpecial && Long.valueOf(timeStamp) > Long.valueOf(Param.mDate)) {
                 Log.d(TAG, "parseWeather: 普通气象消息，但是有效期已过");
+                return null;
+            }
+
+            if (!isSpecial&&!Param.AUTHORITY[company]){
                 return null;
             }
 
@@ -1112,10 +1140,16 @@ public class MapFragment extends Fragment {
             //NOTE:设置为全局吧...
             weathers = new WeatherBean[areaCount + 1][forecastCount];
 
+            Log.e(TAG, "parseWeather: 分组情况:" + groupCount);
 
-            //重来一次；
+            lists.clear();
+
             for (int i = 0; i < groupCount; i++) { //外层按组分，移动有几组；
                 int count = data[weatherIndex++];  //第i组中包含的海区数量；
+                ArrayList<Integer> list = new ArrayList<>();
+                for (int j = 0; j < count; j++) {
+//                    list.add(data[weatherIndex++]);
+                }
                 //此时的index为当前组海区号的起始位置
                 int tempIndex = weatherIndex;  //此时的tempIndex代表的当前组海区号的起始位置；
                 weatherIndex += count; //先跳过count自己,因为要先解析接下来几组的相同的天气,然后在回填;
@@ -1133,9 +1167,12 @@ public class MapFragment extends Fragment {
                         weatherIndex += 19;
                     }
                     //天气数据回填;
+
                     for (int k = tempIndex; k < tempIndex + count; k++) {
                         weathers[data[k]][j] = bean;
+
                     }
+
                 }
             }
 
@@ -1160,7 +1197,7 @@ public class MapFragment extends Fragment {
         WeatherBean bean = new WeatherBean();
         bean.weatherType1 = data[weatherIndex++];
         bean.weatherType2 = data[weatherIndex++];
-
+        Log.e(TAG, "parseWeatherInMaoMing: 天气类型:" + bean.weatherType1 + "--" + bean.weatherType2);
         int windDirect1 = data[weatherIndex++];
 
         int windPower1_1 = data[weatherIndex++];

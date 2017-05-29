@@ -73,7 +73,7 @@ public class Param {
             R.drawable.w26, R.drawable.w27, R.drawable.w28, R.drawable.w29,
             R.drawable.w30, R.drawable.w31, R.drawable.w32, R.drawable.w33,
             R.drawable.w34, R.drawable.w35, R.drawable.w36, R.drawable.w37,
-			R.drawable.w38, R.drawable.w6, R.drawable.w7, R.drawable.w8,
+            R.drawable.w38, R.drawable.w6, R.drawable.w7, R.drawable.w8,
             R.drawable.w9, R.drawable.w7, R.drawable.w8, R.drawable.w9,
             R.drawable.w8, R.drawable.w9, R.drawable.w9, R.drawable.w20,
             R.drawable.w21, R.drawable.w21,};
