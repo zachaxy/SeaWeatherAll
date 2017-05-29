@@ -1161,11 +1161,11 @@ public class MapFragment extends Fragment {
                 int count = data[weatherIndex++];  //第i组中包含的海区数量；
                 ArrayList<Integer> list = new ArrayList<>();
                 for (int j = 0; j < count; j++) {
-//                    list.add(data[weatherIndex++]);
+                    list.add(data[weatherIndex++] + 0);
                 }
                 //此时的index为当前组海区号的起始位置
-                int tempIndex = weatherIndex;  //此时的tempIndex代表的当前组海区号的起始位置；
-                weatherIndex += count; //先跳过count自己,因为要先解析接下来几组的相同的天气,然后在回填;
+//                int tempIndex = weatherIndex;  //此时的tempIndex代表的当前组海区号的起始位置；
+//                weatherIndex += count; //先跳过count自己,因为要先解析接下来几组的相同的天气,然后在回填;
 
                 for (int j = 0; j < forecastCount; j++) { //内层按照预报时间长度分，两天or七天
                     WeatherBean bean;
@@ -1179,14 +1179,13 @@ public class MapFragment extends Fragment {
                         bean = parseWeatherInMaoMing(data, weatherIndex, whatMsg == 2);
                         weatherIndex += 19;
                     }
-                    //天气数据回填;
-
-                    for (int k = tempIndex; k < tempIndex + count; k++) {
+                    //天气数据回填;同一个组中，第j天的天气情况；
+                    for (int k : list) {
                         weathers[data[k]][j] = bean;
-
                     }
 
                 }
+                areaLists.add(list);
             }
 
 
