@@ -73,7 +73,11 @@ public class Param {
             R.drawable.w26, R.drawable.w27, R.drawable.w28, R.drawable.w29,
             R.drawable.w30, R.drawable.w31, R.drawable.w32, R.drawable.w33,
             R.drawable.w34, R.drawable.w35, R.drawable.w36, R.drawable.w37,
-            R.drawable.w38};
+			R.drawable.w38, R.drawable.w6, R.drawable.w7, R.drawable.w8,
+            R.drawable.w9, R.drawable.w7, R.drawable.w8, R.drawable.w9,
+            R.drawable.w8, R.drawable.w9, R.drawable.w9, R.drawable.w20,
+            R.drawable.w21, R.drawable.w21,};
+
 
 
     public static final String[] weatherName = {"",
@@ -81,7 +85,10 @@ public class Param {
             "特大暴雨", "阵雨", "雷阵雨", "雷阵雨伴有冰雹", "雷电", "冰雹", "冻雨", "霜冻",
             "雨夹雪", "小雪", "中雪", "大雪", "暴雪", "轻雾", "雾", "浓雾",
             "霾", "小雨-中雨", "中雨-大雨", "大雨-暴雨", "暴雨-大暴雨", "大暴雨-特大暴雨", "小雪-中雪", "中雪-大雪",
-            "大雪-暴雪", "浮尘", "扬沙", "沙尘暴", "强沙尘暴", "台风"
+            "大雪-暴雪", "浮尘", "扬沙", "沙尘暴", "强沙尘暴", "台风",
+ 			"小到大雨", "小到暴雨", "小到大暴雨",
+            "小到特大暴雨", "中到暴雨", "中到大暴雨", "中到特大暴雨", "大到大暴雨",
+            "大到特大暴雨", "暴雨到特大暴雨", "小到大雪", "小到暴雪", "中到暴雪"
     };
 
     public static final String[] windDirection = {"", "北风", "北东北风", "东北风", "东东北风", "东风", "东东南风", "东南风", "南东南风",
