@@ -88,10 +88,10 @@ public class MapFragment extends Fragment {
     private DetailPicturePagerAdapter vpAdapter;
 
     private FrameLayout smallAreaFrameLayout;
-    public ZoomImageView zoomImageViewZhouShan;
+    public ZoomImageView zoomImageViewZhouShan; //TODO:如何与currentZoomView关联是个问题啊；
     public ImageView closeSmallArea;
 
-    public ZoomImageView currentZoomView;
+    public static ZoomImageView currentZoomView;
 
     private ImageView clearTyphoon; //台风轨迹清除
 
@@ -1858,9 +1858,39 @@ public class MapFragment extends Fragment {
 
     private String formatWeathers() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < areaLists.size(); i++) {
-//            sb.append("")
+        String[] areaName = null;
+        switch (Param.CURRENT_POSITION) {
+            case Param.SHANDONG_0:
+                areaName = Param.SHANDONG_AREA_NAME;
+                break;
+            case Param.MAOMING_0:
+                areaName = Param.MAOMING_FAR_AREA_NAME;
+                break;
+            case Param.MAOMING_1:
+                areaName = Param.MAOMING_NEAR_AREA_NAME;
+                break;
+            case Param.ZHOUSHAN_0:
+                break;
         }
+
+        if (areaName != null) {
+
+            for (int i = 0; i < areaLists.size(); i++) {//外层循环，分为多少组
+                ArrayList<Integer> list = areaLists.get(i);
+                for (int nameIndex : list) { //拼接各区域名字
+                    sb.append(areaName[nameIndex]).append(",");
+                }
+                //内存循环，连续7天的
+                for (int j = 0; j < weathers[0].length; j++) {
+                    sb.append("第").append(j).append("天的天气预报：")
+                            .append(currentZoomView.weathers[list.get(0)][j].getMsgContent()).append("\n");
+                }
+
+            }
+        } else {
+            Log.e(TAG, "formatWeathers: 获取不到区域名字，那么现在的 Param.CURRENT_POSITION 是" + Param.CURRENT_POSITION);
+        }
+
 
         return sb.toString();
     }
@@ -1912,15 +1942,21 @@ public class MapFragment extends Fragment {
                     Log.e("###setting", "收到的注册时间是:" + date_text);
                     date.setText(date_text);
                     break;
-                case 15:  //TODO:气象信息,台风;目前只是在右侧显示了，还没有在左侧界面显示；
+                case 15:
+                    //先把图片切换过去，这时候weathers的属性已经有了，current只不过是一个引用；这是图片发送的，并不是用户滑动的；
+                    picViewPager.setCurrentItem(Param.map2position.get(Param.CURRENT_POSITION));
+                    // TODO: 2017/5/30 0030 还没有考虑舟山特殊的布局；到时候用if条件判断一下；weahers赋值后没有刷新界面，怎么处理？
+//                    currentZoomView = vpAdapter.getCurrentItem(); //拿到当前的图片；
                     if (iMsg.getMsgType() == Param.type_typhooon) {
                         TyphoonBean bean = (TyphoonBean) iMsg;
                         addRecentMsg(new RecentMsg(R.drawable.w38, bean.getMsgContent(), bean.timeStamp));
                     } else { //气象信息，多组的，需要重新拼装一下信息；注意，所有的消息都在全局变量的二维数组中；
+                        currentZoomView.weathers = weathers; //之前可能经历过一次读缓存，但是最终是以这个为准；
+//                        currentZoomView.invalidate();
                         addRecentMsg(new RecentMsg(R.drawable.w1, formatWeathers(), iMsg.getTimeStamp()));
+                        // TODO: 2017/5/30 0030 对于其onDraw的顺序还不确定；
                     }
-                    picViewPager.setCurrentItem(Param.map2position.get(Param.CURRENT_POSITION));
-                    currentZoomView = vpAdapter.getCurrentItem();
+
                     break;
                 case 16:
                     cNo.setText(Param.mSNN);
@@ -1957,7 +1993,7 @@ public class MapFragment extends Fragment {
                     // 无参数响应
                     showDialog(Param.param + "设置无响应");
                     break;
-                case 23:
+                case 23: // 接受到UID
                     Tools.initMapPic();
                     vpAdapter.notifyDataSetChanged();
                     break;

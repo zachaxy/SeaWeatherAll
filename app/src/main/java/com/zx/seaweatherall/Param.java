@@ -1,10 +1,11 @@
 package com.zx.seaweatherall;
 
 import com.felhr.usbserial.UsbSerialDevice;
+import com.zx.seaweatherall.bean.Locater;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 
 /**
  * Created by zhangxin on 2017/5/8 0008.
@@ -130,12 +131,70 @@ public class Param {
 
     //山东远海区
     public static final int SHANDONG_FAR_SEA_AREA_COUNT = 18;
+    public static final String[] SHANDONG_AREA_NAME = {
+            "中国",
+            "渤海",
+            "渤海海峡",
+            "黄海北部",
+            "黄海中部",
+            "黄海南部",
+            "东海北部",
+            "东海南部",
+            "台湾海峡",
+            "台湾省以东",
+            "巴士海峡",
+            "北部湾",
+            "琼州海峡",
+            "南海西北部",
+            "南海东北部",
+            "南海中西部",
+            "南海中东部",
+            "南海西南部",
+            "南海东南部",
+    };
 
 
     //茂名
     public static final int MAOMING_FAR_AREA_COUNT = 18;
     public static final int MAOMING_NEAR_AREA_COUNT = 10;
     public static final int MAOMING_FISH_AREA_COUNT = 23;
+
+    public static final String[] MAOMING_FAR_AREA_NAME = {
+            "中国",
+            "台湾海峡",
+            "汕头附近海面",
+            "汕尾附近海面",
+            "珠江口外海面",
+            "珠江口内海面",
+            "川山群岛附近海面",
+            "湛江附近海面",
+            "琼州海峡",
+            "北部湾",
+            "海南岛西南部",
+            "西沙",
+            "东沙",
+            "中沙",
+            "巴士海峡",
+            "南沙",
+            "华列拉",
+            "头顿",
+            "曾母暗沙",
+    };
+
+    public static final String[] MAOMING_NEAR_AREA_NAME = {
+            "中国",
+            "南澳",
+            "草屿",
+            "托泞列岛",
+            "万山",
+            "上川",
+            "下川",
+            "海陵",
+            "放鸡岛",
+            "东海",
+            "涠洲",
+    };
+
 
     //舟山大渔区，小渔区
     public static final int ZHOUSHAN_BIG_FISH_AREA_COUNT = 13;
@@ -163,9 +222,11 @@ public class Param {
 
     //ViewPager中展示的是哪个地图,注意这里显示的不是VP的index，而是SHANDONG_0，表示位置的，值的复制是在解析消息的时候赋值的；
     public static int CURRENT_POSITION = -1;
-    
+
     //当前区域的海区号码；
     public static int AREA_NO;
 
+
+    public static LinkedHashMap<Integer, ArrayList<Locater>> typhoonMap = new LinkedHashMap<Integer, ArrayList<Locater>>();
 
 }

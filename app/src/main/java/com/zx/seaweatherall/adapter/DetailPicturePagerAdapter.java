@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.zx.seaweatherall.Param;
 import com.zx.seaweatherall.bean.WeatherBean;
+import com.zx.seaweatherall.ui.MapFragment;
 import com.zx.seaweatherall.utils.ACache;
 import com.zx.seaweatherall.widget.ZoomImageView;
 
@@ -51,6 +52,7 @@ public class DetailPicturePagerAdapter extends PagerAdapter {
                 mCurrentZoomImageView.resetSize();
             }
             mCurrentZoomImageView = (ZoomImageView) object;
+            MapFragment.currentZoomView = mCurrentZoomImageView;
             mCurrentZoomImageView.weathers = (WeatherBean[][]) mAcache.getAsObject("weather" + Param.CURRENT_POSITION);
         }
     }
