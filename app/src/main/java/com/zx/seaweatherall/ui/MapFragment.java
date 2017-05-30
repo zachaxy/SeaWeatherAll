@@ -2,9 +2,12 @@ package com.zx.seaweatherall.ui;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -17,6 +20,7 @@ import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -66,9 +70,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.zx.seaweatherall.Param.IsTyphonClear;
-import static com.zx.seaweatherall.Param.SHANDONG;
-
 
 /**
  * Created by zhangxin on 2017/5/26 0026.
@@ -81,8 +82,8 @@ public class MapFragment extends Fragment {
 
     private FrameLayout bigAreaFrameLayout;
     private ViewPager picViewPager;
-    public ZoomImageView zoomImageViewVP;
-    private LinearLayout indicator;
+    //    public ZoomImageView zoomImageViewVP;
+    private LinearLayout indicator;  // TODO: 添加指示器；
 
     private DetailPicturePagerAdapter vpAdapter;
 
@@ -161,6 +162,9 @@ public class MapFragment extends Fragment {
     private volatile double w;  //维度;
 
     SharedPreferences sp;
+
+    LocalBroadcastManager localBroadcastManager; //是在没办法，使用广播来接收吧。。。
+    BroadcastReceiver uidReceiver;
 
     @Nullable
     @Override
@@ -414,6 +418,20 @@ public class MapFragment extends Fragment {
 
             }
         });
+
+        //使用广播来来获取是否接受到UID；
+        localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("onReceiveUID");
+        uidReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                h1.sendEmptyMessage(23);
+            }
+
+        };
+        localBroadcastManager.registerReceiver(uidReceiver, intentFilter);
     }
 
     // TODO: 2017/5/27 0027 要处理的逻辑是：手动换了图，需不需要记录当前，如果此时消息发来如何处理；
@@ -502,6 +520,7 @@ public class MapFragment extends Fragment {
         Glide.with(getContext()).load(index).into(zoomImageViewZhouShan);
         bigAreaFrameLayout.setVisibility(View.GONE);
     }
+
 
     //不断从usb中读取数据
     public class ReadThread extends Thread {
@@ -1183,7 +1202,7 @@ public class MapFragment extends Fragment {
 
                 for (int j = 0; j < forecastCount; j++) { //内层按照预报时间长度分，两天or七天
                     WeatherBean bean;
-                    if (company == SHANDONG) {
+                    if (company == Param.SHANDONG) {
                         bean = parseWeatherInShanDong(data, weatherIndex);
                         weatherIndex += 15;
                     } else if (company == Param.ZHOUSHAN) {
@@ -1822,12 +1841,16 @@ public class MapFragment extends Fragment {
         mReadThread.stopReadThread();
         mParseParamThread.stopParseParamThread();
         mExtractAppThread.stopExtractAppThread();
+        if (localBroadcastManager != null) {
+            localBroadcastManager.unregisterReceiver(uidReceiver);
+        }
+
         // 序列化
         mCache.put("recentMsg", recentMsgList);
     }
 
     private void addRecentMsg(RecentMsg msg) {
-        recentMsgList.add(0, msgBean);
+        recentMsgList.add(0, msg);
         if (recentMsgList.size() > 20) {
             recentMsgList.remove(20);
         }
@@ -1842,6 +1865,7 @@ public class MapFragment extends Fragment {
         return sb.toString();
     }
 
+
     /* 将进行转换msg.obj
          zoomImageView.invalidate();
          11:短信+商务信息；
@@ -1855,7 +1879,8 @@ public class MapFragment extends Fragment {
          19:sdr错误的回复
          20:ack
          21:nack
-         22:无响应*/
+         22:无响应
+         23:ViewPager中的数据改变了*/
     public Handler h1 = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -1895,6 +1920,7 @@ public class MapFragment extends Fragment {
                         addRecentMsg(new RecentMsg(R.drawable.w1, formatWeathers(), iMsg.getTimeStamp()));
                     }
                     picViewPager.setCurrentItem(Param.map2position.get(Param.CURRENT_POSITION));
+                    currentZoomView = vpAdapter.getCurrentItem();
                     break;
                 case 16:
                     cNo.setText(Param.mSNN);
@@ -1930,6 +1956,10 @@ public class MapFragment extends Fragment {
                 case 22:
                     // 无参数响应
                     showDialog(Param.param + "设置无响应");
+                    break;
+                case 23:
+                    Tools.initMapPic();
+                    vpAdapter.notifyDataSetChanged();
                     break;
                 case 36:
                     cRate.setText("");

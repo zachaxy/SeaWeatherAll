@@ -7,6 +7,7 @@ import android.util.Log;
 import com.zx.seaweatherall.ui.MainActivity;
 import com.zx.seaweatherall.utils.DBUtils;
 import com.zx.seaweatherall.utils.SymEncrypt;
+import com.zx.seaweatherall.utils.Tools;
 import com.zxy.recovery.callback.RecoveryCallback;
 import com.zxy.recovery.core.Recovery;
 
@@ -48,6 +49,7 @@ public class SeaWeatherApp extends Application {
         }
         //mData中保存的是long的类型；但是用String表示的；
         Param.mDate = tmpData;
+        Param.mOffSet = sp.getString("P_OFFSET", "180");
 
         initMapPic(sp);
 
@@ -60,33 +62,8 @@ public class SeaWeatherApp extends Application {
         Param.my_group = sp.getInt("my_group", 1);
         Param.my_id = sp.getInt("my_id", 100);
         Param.my_authority = sp.getInt("my_authority", 3);
+        Tools.initMapPic();
 
-        int index = 0;
-        if ((Param.my_authority & 0x01) > 0) {
-            Param.AUTHORITY[Param.SHANDONG] = true;
-            Param.MAP_PIC.add(R.drawable.p1);
-            Param.map2position.put(Param.SHANDONG_0, index);
-            index++;
-        }
-
-        if ((Param.my_authority & 0x02) > 0) {
-            Param.AUTHORITY[Param.MAOMING] = true;
-            Param.MAP_PIC.add(R.drawable.p2);
-            Param.MAP_PIC.add(R.drawable.p3);
-            Param.map2position.put(Param.MAOMING_0, index);
-            index++;
-            Param.map2position.put(Param.MAOMING_1, index);
-            index++;
-        }
-
-/*        if ((Param.my_authority & 0x04) > 0) {
-            Param.AUTHORITY[Param.ZHOUSHAN] = true;
-            Param.MAP_PIC.add(R.drawable.p4);
-            // TODO: 2017/5/26 0026  还要特别注意一下四个小图
-
-            Param.map2position.put(Param.ZHOUSHAN_0, index);
-            index++;
-        }*/
     }
 
     static final class MyCrashCallback implements RecoveryCallback {

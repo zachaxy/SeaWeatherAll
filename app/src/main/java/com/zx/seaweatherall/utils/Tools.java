@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.util.Log;
 
 import com.zx.seaweatherall.Param;
+import com.zx.seaweatherall.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -217,4 +218,32 @@ public class Tools {
         return 0;
     }*/
 
+    public static void initMapPic(){
+        int index = 0;
+        if ((Param.my_authority & 0x01) > 0) {
+            Param.AUTHORITY[Param.SHANDONG] = true;
+            Param.MAP_PIC.add(R.drawable.p1);
+            Param.map2position.put(Param.SHANDONG_0, index);
+            index++;
+        }
+
+        if ((Param.my_authority & 0x02) > 0) {
+            Param.AUTHORITY[Param.MAOMING] = true;
+            Param.MAP_PIC.add(R.drawable.p2);
+            Param.MAP_PIC.add(R.drawable.p3);
+            Param.map2position.put(Param.MAOMING_0, index);
+            index++;
+            Param.map2position.put(Param.MAOMING_1, index);
+            index++;
+        }
+
+/*        if ((Param.my_authority & 0x04) > 0) {
+            Param.AUTHORITY[Param.ZHOUSHAN] = true;
+            Param.MAP_PIC.add(R.drawable.p4);
+            // TODO: 2017/5/26 0026  还要特别注意一下四个小图
+
+            Param.map2position.put(Param.ZHOUSHAN_0, index);
+            index++;
+        }*/
+    }
 }

@@ -38,7 +38,7 @@ public class Param {
     public static String mChanel10;
 
     // 10个信道
-    public static List<String> mChannels;
+    public static ArrayList<String> mChannels;
 
     // 频偏
     public static String mOffSet;
@@ -163,10 +163,9 @@ public class Param {
 
     //ViewPager中展示的是哪个地图,注意这里显示的不是VP的index，而是SHANDONG_0，表示位置的，值的复制是在解析消息的时候赋值的；
     public static int CURRENT_POSITION = -1;
-
-    //本机当前所在的地区
-    public static int AREA;
-    //当前区域的
+    
+    //当前区域的海区号码；
     public static int AREA_NO;
+
 
 }

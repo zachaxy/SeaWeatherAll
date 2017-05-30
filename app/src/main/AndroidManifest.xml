@@ -14,6 +14,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
+    <!--读写文件，需要用到文件缓存-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
     <!-- 读取任务栈,用来做crash自动恢复 -->
     <uses-permission android:name="android.permission.GET_TASKS"/>
 
@@ -41,14 +44,14 @@
         </activity>
 
         <!--注册广播事件,其监听的事件为系统开机广播-->
-<!--        <receiver
-            android:name=".receiver.AutostartReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-            </intent-filter>
-        </receiver>-->
+        <!--        <receiver
+                    android:name=".receiver.AutostartReceiver"
+                    android:enabled="true"
+                    android:exported="true">
+                    <intent-filter>
+                        <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                    </intent-filter>
+                </receiver>-->
 
     </application>
 

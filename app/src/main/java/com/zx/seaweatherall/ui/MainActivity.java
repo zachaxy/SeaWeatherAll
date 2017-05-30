@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -190,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         settingImage.setImageResource(R.drawable.admin_unselect);
         dbImage.setImageResource(R.drawable.db_unselect);
     }
+
 
 /*    void saveAreaNo() {
         SharedPreferences sp = getSharedPreferences("SP_AREA_NO", Context.MODE_PRIVATE);
