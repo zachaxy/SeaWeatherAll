@@ -2,6 +2,7 @@ package com.zx.seaweatherall.ui;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -46,6 +47,7 @@ import com.zx.seaweatherall.bean.TyphoonBean;
 import com.zx.seaweatherall.bean.WeatherBean;
 import com.zx.seaweatherall.utils.ACache;
 import com.zx.seaweatherall.utils.BytesUtil;
+import com.zx.seaweatherall.utils.DBUtils;
 import com.zx.seaweatherall.utils.Protocol;
 import com.zx.seaweatherall.utils.StrUtil;
 import com.zx.seaweatherall.utils.SymEncrypt;
@@ -1015,6 +1017,10 @@ public class MapFragment extends Fragment {
         }
 
         int imgID = R.drawable.business_msg_unread;
+        ContentValues bmsgValues = new ContentValues();
+        bmsgValues.put("time", timeStamp);
+        bmsgValues.put("content", ordinaryMSG);
+        DBUtils.getDB().insertData("bmsg", bmsgValues);
         return new RecentMsg(imgID, ordinaryMSG, timeStamp);
 
     }
@@ -1084,6 +1090,12 @@ public class MapFragment extends Fragment {
         }
 
         int imgID = R.drawable.msg_unread;
+
+        ContentValues msgValues = new ContentValues();
+        msgValues.put("time", timeStamp);
+        msgValues.put("phoneNo", phoneNo);
+        msgValues.put("content", ordinaryMSG);
+        DBUtils.getDB().insertData("bmsg", msgValues);
         return new RecentMsg(imgID, ordinaryMSG, timeStamp);
     }
 
@@ -1091,7 +1103,6 @@ public class MapFragment extends Fragment {
     IMsg parseWeather(String timeStamp, byte[] data, boolean isSpecial) {
         int weatherIndex = 1;//从1开始,0代表的是消息类型,之前已经解析过了;
         int company = data[weatherIndex++];  //代表是哪个公司,山东气象局、舟山气象局和茂名气象局
-
 
         int whatMsg = data[weatherIndex++]; //代表是哪个类型; 0表示海区，1表示渔场区，2表示沿岸海区，3表示台风气象。
 
@@ -1101,23 +1112,22 @@ public class MapFragment extends Fragment {
             Log.e(TAG, "parseWeather: 解析台风");
             return parseTyphoon(data, weatherIndex, timeStamp);
         } else {
+            //如果不是特殊天气，先看一下自己有没有这个权限可以接收，如果自己不能接受，直接返回；
+            if (!isSpecial && !Param.AUTHORITY[company]) {
+                return null;
+            }
+
             //如果不是特殊天气，先在这里验证一下有效期，如果无效，直接返回
             if (!isSpecial && Long.valueOf(timeStamp) > Long.valueOf(Param.mDate)) {
                 Log.d(TAG, "parseWeather: 普通气象消息，但是有效期已过");
                 return null;
             }
 
-            if (!isSpecial && !Param.AUTHORITY[company]) {
-                return null;
-            }
-
-            //0表示远海区，1表示渔场区，2表示沿岸海区
-
 
             //预报的时效; 高四位 + 低四位
             int forecastLength = data[weatherIndex++];
 
-            //高四位每个单位多少小时:时效,24小时*7天或者12小时*2半天; 0:24小时  1:12小时;
+            //TODO:高四位每个单位多少小时:时效,24小时*7天或者12小时*2半天; 0:24小时  1:12小时;
             int forecastTimeInterval = forecastLength >> 4;
 
             //低4位表报多少个单位时间,七天或者半天*2;
@@ -1128,14 +1138,17 @@ public class MapFragment extends Fragment {
             //根据公司，地区，渔区类型来确定分为几个区;
             int areaCount = 0;
             if (company == Param.SHANDONG) {
+                Param.CURRENT_POSITION = Param.SHANDONG_0;
                 areaCount = Param.SHANDONG_FAR_SEA_AREA_COUNT;
             } else if (company == Param.MAOMING) {
+                Param.CURRENT_POSITION = Param.MAOMING_0;
                 if (whatMsg == 1) {
                     areaCount = Param.MAOMING_FISH_AREA_COUNT;
                 } else if (whatMsg == 0) {
                     areaCount = Param.MAOMING_FAR_AREA_COUNT;
                 } else {
                     areaCount = Param.MAOMING_NEAR_AREA_COUNT;
+                    Param.CURRENT_POSITION = Param.MAOMING_1;
                 }
             } else {//舟山只有渔区？？？
                 if (fishAreaType == 0) {
@@ -1189,7 +1202,7 @@ public class MapFragment extends Fragment {
                 areaLists.add(list);
             }
 
-
+            mCache.put("weather" + Param.CURRENT_POSITION, weathers);
             String content = "";
             try {
                 content += new String(data, weatherIndex, data.length - weatherIndex, "gbk");
@@ -1635,6 +1648,14 @@ public class MapFragment extends Fragment {
             e.printStackTrace();
             typhoonContent.append("未知内容");
         }
+        ContentValues typhoonValues = new ContentValues();
+        typhoonValues.put("typhoonNo", typhoonNo);
+        typhoonValues.put("typhoonName", typhoonName);
+        typhoonValues.put("typhoonContent", typhoonContent.toString());
+        typhoonValues.put("locateX", typhoonX);
+        typhoonValues.put("locateY", typhoonY);
+        DBUtils.getDB().insertData("typhoon", typhoonValues);
+        mCache.put("typhoonName", typhoonCircleList);
         // TODO: 2017/4/19 0019 暂时生成一个台风的bean对象;将台风对象也设置为全局的,已经没有办法返回了;
         return new TyphoonBean(timeStamp, typhoonNo, typhoonName, typhoonX, typhoonY,
                 typhoonTime3, typhoonCircleList, typhoonContent.toString());
@@ -1870,10 +1891,10 @@ public class MapFragment extends Fragment {
                     if (iMsg.getMsgType() == Param.type_typhooon) {
                         TyphoonBean bean = (TyphoonBean) iMsg;
                         addRecentMsg(new RecentMsg(R.drawable.w38, bean.getMsgContent(), bean.timeStamp));
-
                     } else { //气象信息，多组的，需要重新拼装一下信息；注意，所有的消息都在全局变量的二维数组中；
                         addRecentMsg(new RecentMsg(R.drawable.w1, formatWeathers(), iMsg.getTimeStamp()));
                     }
+                    picViewPager.setCurrentItem(Param.map2position.get(Param.CURRENT_POSITION));
                     break;
                 case 16:
                     cNo.setText(Param.mSNN);

@@ -45,6 +45,7 @@ import java.io.InputStream;
 public class ZoomImageView extends ImageView implements
         ViewTreeObserver.OnGlobalLayoutListener,
         ScaleGestureDetector.OnScaleGestureListener, View.OnTouchListener {
+
     private boolean mOnce = false;
 
     // 初始缩放值(正好适合屏幕的缩放值),双击放大达到的值,放大的最大值
@@ -76,7 +77,9 @@ public class ZoomImageView extends ImageView implements
 
 
     public WeatherBean weather;
+    public WeatherBean[][] weathers;
     public TyphoonBean typhoon;
+
 
     //点击时弹出详细信息的窗口
     PopupWindow popupWindow;
@@ -144,13 +147,17 @@ public class ZoomImageView extends ImageView implements
                                 dismissPopupWindow(); //可能存在的情况是:我之前点击了1,正在显示,现在我又点击了2,那么我就让之前的消失掉;
                                 TextView area = (TextView) detailContent.findViewById(R.id.detail_popup_tv_area);
                                 area.setText(Param.AREA_NAME[i]);
-                                ImageView img = (ImageView) detailContent.findViewById(R.id.detail_popup_img_weather_type);
+                                ImageView img = (ImageView) detailContent.findViewById(R.id
+                                .detail_popup_img_weather_type);
                                 img.setImageBitmap(Param.bitmaps[Param.weaherDetail[i].weatherType]);
-                                TextView tv_type = (TextView) detailContent.findViewById(R.id.detail_popup_tv_weather_type);
+                                TextView tv_type = (TextView) detailContent.findViewById(R.id
+                                .detail_popup_tv_weather_type);
                                 tv_type.setText(Param.weatherName[Param.weaherDetail[i].weatherType]);
-                                TextView tv_wind = (TextView) detailContent.findViewById(R.id.detail_popup_tv_weather_wind);
+                                TextView tv_wind = (TextView) detailContent.findViewById(R.id
+                                .detail_popup_tv_weather_wind);
                                 tv_wind.setText(Param.weaherDetail[i].wind_power);
-                                TextView time = (TextView) detailContent.findViewById(R.id.detail_popup_tv_weather_time);
+                                TextView time = (TextView) detailContent.findViewById(R.id
+                                .detail_popup_tv_weather_time);
                                 time.setText("发布时间:" + BytesUtil.formatTime(Param.weaherDetail[i].time.toCharArray()));
                                 popupWindow = new PopupWindow(detailContent, -2, -2);
                                 //需要注意的是:使用popupwindow,必须设置背景,不然动画效果不能展示
@@ -158,9 +165,11 @@ public class ZoomImageView extends ImageView implements
                                 //传入一个长度为2的数组,将返回该view距离屏幕x,y的距离
                                 //int[] location = new int[2];
                                 //view.getLocationInWindow(location);
-                                popupWindow.showAtLocation(ZoomImageView.this, Gravity.LEFT + Gravity.TOP, (int) e.getX(), (int) e.getY());
+                                popupWindow.showAtLocation(ZoomImageView.this, Gravity.LEFT + Gravity.TOP, (int) e
+                                .getX(), (int) e.getY());
 
-                                ScaleAnimation animation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                                ScaleAnimation animation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation
+                                .RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                                 animation.setDuration(300);
                                 detailContent.startAnimation(animation);
                                 inFlag = true;
@@ -567,6 +576,12 @@ public class ZoomImageView extends ImageView implements
         super.onDraw(canvas);
         RectF rect = getMatrixRectF();
 
+        //显示天气
+        if (weathers!=null){
+
+        }
+
+        //显示台风
 
     }
 
@@ -602,7 +617,8 @@ public class ZoomImageView extends ImageView implements
         //rect.centerX() + (float) currentLocation.x * currentScale
         popupWindow.showAtLocation(ZoomImageView.this, Gravity.LEFT + Gravity.TOP, x, y);
 
-        ScaleAnimation animation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        ScaleAnimation animation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation
+        .RELATIVE_TO_SELF, 0.5f);
         animation.setDuration(300);
         detailContent.startAnimation(animation);
         MapFragment.tts.speak(Param.AREA_NAME[i] + Param.seperator +
@@ -636,7 +652,8 @@ public class ZoomImageView extends ImageView implements
         //rect.centerX() + (float) currentLocation.x * currentScale
         popupWindow.showAtLocation(ZoomImageView.this, Gravity.LEFT + Gravity.TOP, x, y);
 
-        ScaleAnimation animation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        ScaleAnimation animation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation
+        .RELATIVE_TO_SELF, 0.5f);
         animation.setDuration(300);
         detailContent.startAnimation(animation);
 *//*        MapFragment.tts.speak(Param.AREA_NAME[i] + Param.seperator +

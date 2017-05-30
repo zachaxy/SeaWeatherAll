@@ -79,14 +79,13 @@ public class Param {
             R.drawable.w21, R.drawable.w21,};
 
 
-
     public static final String[] weatherName = {"",
             "晴", "多云", "阴天", "小雨", "中雨", "大雨", "暴雨", "大暴雨",
             "特大暴雨", "阵雨", "雷阵雨", "雷阵雨伴有冰雹", "雷电", "冰雹", "冻雨", "霜冻",
             "雨夹雪", "小雪", "中雪", "大雪", "暴雪", "轻雾", "雾", "浓雾",
             "霾", "小雨-中雨", "中雨-大雨", "大雨-暴雨", "暴雨-大暴雨", "大暴雨-特大暴雨", "小雪-中雪", "中雪-大雪",
             "大雪-暴雪", "浮尘", "扬沙", "沙尘暴", "强沙尘暴", "台风",
- 			"小到大雨", "小到暴雨", "小到大暴雨",
+            "小到大雨", "小到暴雨", "小到大暴雨",
             "小到特大暴雨", "中到暴雨", "中到大暴雨", "中到特大暴雨", "大到大暴雨",
             "大到特大暴雨", "暴雨到特大暴雨", "小到大雪", "小到暴雪", "中到暴雪"
     };
@@ -162,9 +161,8 @@ public class Param {
     public static HashMap<Integer, Integer> map2position = new HashMap<>();
 
 
-
-    //ViewPager中展示的是哪个地图
-    public static int VP_CURRENT_POSITION;
+    //ViewPager中展示的是哪个地图,注意这里显示的不是VP的index，而是SHANDONG_0，表示位置的，值的复制是在解析消息的时候赋值的；
+    public static int CURRENT_POSITION = -1;
 
     //本机当前所在的地区
     public static int AREA;

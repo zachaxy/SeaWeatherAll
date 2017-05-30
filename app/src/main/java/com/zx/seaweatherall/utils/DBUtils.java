@@ -19,26 +19,26 @@ public class DBUtils {
             "img interger," +
             "is_read integer)";
 
-    //用来接受左边消息栏的内容
+    //用来接收左边消息栏的内容，现在用缓存ACache来实现了；
     private static final String CREATE_RECENT_MSGLIST = "create table recentMSG( "
             + "id integer primary key autoincrement,"
             + "img interger,"
             + "time text,"
             + "msg text )";
 
-    private static final String CREATE_MSG = "create table msg( "
+    private static final String CREATE_MSG = "create table if not exists msg( "
             + "id integer primary key autoincrement,"
             + "time text,"
             + "phoneNo text,"
             + "content text )";
 
-    private static final String CREATE_BMSG = "create table bmsg( "
+    private static final String CREATE_BMSG = "create table if not exists bmsg( "
             + "id integer primary key autoincrement,"
             + "time text,"
             + "content text )";
 
     // TODO: 2017/5/26 0026 还不知道能不能插入浮点数；
-    private static final String CREATE_TYPHOON = "create table typhoon( "
+    private static final String CREATE_TYPHOON = "create table if not exists typhoon( "
             + "id integer primary key autoincrement,"
             + "typhoonNo interger,"
             + "typhoonName text"
@@ -55,7 +55,7 @@ public class DBUtils {
     }
 
     //提供统一的对外接口；
-    public static DBUtils getDB(Context context) {
+    public static void init(Context context) {
         if (sDBUtis == null) {
             synchronized (DBUtils.class) {
                 if (sDBUtis == null) {
@@ -63,20 +63,30 @@ public class DBUtils {
                 }
             }
         }
+    }
+
+    public static DBUtils getDB() {
         return sDBUtis;
     }
 
     // TODO: 2017/5/26 0026  
-    public void insertData(){
-        
+    public void insertData(String table, ContentValues values) {
+        //先看一下当前表中一共有多少项，如果超过200条，那么删除最前面的一条；
+        Cursor cursor = mSQLiteDatabase.query(table, null, null, null, null, null, "id asc");
+        if (cursor.getCount() > MAX_TABLE_SIZE && cursor.moveToNext()) {
+            mSQLiteDatabase.delete(table, "id=?",
+                    new String[]{String.valueOf(cursor.getInt(cursor.getColumnIndex("id")))});
+        }
+        cursor.close();
+        mSQLiteDatabase.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        values.clear();
     }
 
     /***
-     * @Deprecated
-     * 插入数据，表明是否已经读取过，只适用于最近消息列表；
      * @param table 数据库表名；
      * @param key   id；
      * @param value 插入的值；
+     * @Deprecated 插入数据，表明是否已经读取过，只适用于最近消息列表；
      */
     public void insertHasRead(String table, String key, int value) {
         //先看一下当前表中一共有多少项，如果超过200条，那么删除最前面的一条；

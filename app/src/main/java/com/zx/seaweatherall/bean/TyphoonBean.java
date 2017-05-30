@@ -12,13 +12,13 @@ import java.util.ArrayList;
 
 public class TyphoonBean extends IMsg {
     //    public String timeStamp; //发送时间；
-    int typhoonNo;  //台风代号
-    String typhoonName;//台风名称;
-    double typhoonX;//当前台风坐标x;
-    double typhoonY;//当前台风坐标y;
-    String typhoonTime;//台风登陆时间;
-    String windPower;
-    String windDirect;
+    public int typhoonNo;  //台风代号
+    public String typhoonName;//台风名称;
+    public double typhoonX;//当前台风坐标x;
+    public double typhoonY;//当前台风坐标y;
+    public String typhoonTime;//台风登陆时间;
+    public String windPower;
+    public String windDirect;
     public ArrayList<Integer> typhoonCircleList; //台风风圈,用来在地图上显示
 
     public TyphoonBean(String timeStamp, int typhoonNo, String typhoonName, double typhoonX, double typhoonY,

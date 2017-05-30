@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.zx.seaweatherall.ui.MainActivity;
+import com.zx.seaweatherall.utils.DBUtils;
 import com.zx.seaweatherall.utils.SymEncrypt;
 import com.zxy.recovery.callback.RecoveryCallback;
 import com.zxy.recovery.core.Recovery;
@@ -49,6 +50,8 @@ public class SeaWeatherApp extends Application {
         Param.mDate = tmpData;
 
         initMapPic(sp);
+
+        DBUtils.init(this);
     }
 
     // TODO: 2017/5/26 0026  还差舟山渔场；
