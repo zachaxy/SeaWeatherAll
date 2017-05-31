@@ -1,6 +1,7 @@
 package com.zx.seaweatherall;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -73,7 +74,7 @@ public class SeaWeatherApp extends Application {
         Param.my_group = sp.getInt("my_group", 1);
         Param.my_id = sp.getInt("my_id", 100);
         Param.my_authority = sp.getInt("my_authority", 3);
-        Tools.initMapPic();
+        Tools.initMapPic(getApplicationContext());
 
     }
 

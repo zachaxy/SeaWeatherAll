@@ -28,6 +28,7 @@ import com.zx.seaweatherall.Param;
 import com.zx.seaweatherall.R;
 import com.zx.seaweatherall.bean.Locater;
 import com.zx.seaweatherall.bean.Locator2;
+import com.zx.seaweatherall.bean.SeaBean;
 import com.zx.seaweatherall.bean.TyphoonBean;
 import com.zx.seaweatherall.bean.WeatherBean;
 import com.zx.seaweatherall.ui.MapFragment;
@@ -76,9 +77,9 @@ public class ZoomImageView extends ImageView implements
     private int postDelayTime = 8;
 
 
-    public WeatherBean weather;
+    /*public WeatherBean weather;
     public WeatherBean[][] weathers;
-    public TyphoonBean typhoon;
+    public TyphoonBean typhoon;*/
 
 
     //点击时弹出详细信息的窗口
@@ -134,7 +135,7 @@ public class ZoomImageView extends ImageView implements
                     }
 
                     //单击确定,用来实现点击指定区域,显示对应区域坐标;
-                    @Override
+                    /*@Override
                     public boolean onSingleTapConfirmed(MotionEvent e) {
                         boolean inFlag = false;
                         float downX = e.getX();
@@ -147,7 +148,7 @@ public class ZoomImageView extends ImageView implements
                             if (Tools.pInQuadrangle(Param.seaAreas2[i], lo)) {
                                 dismissPopupWindow(); //可能存在的情况是:我之前点击了1,正在显示,现在我又点击了2,那么我就让之前的消失掉;
                                 TextView area = (TextView) detailContent.findViewById(R.id.detail_popup_tv_area);
-                                /*area.setText(Param.AREA_NAME[i]);
+                                *//*area.setText(Param.AREA_NAME[i]);
                                 ImageView img = (ImageView) detailContent.findViewById(R.id
                                         .detail_popup_img_weather_type);
                                 img.setImageBitmap(Param.bitmaps[Param.weaherDetail[i].weatherType]);
@@ -160,7 +161,7 @@ public class ZoomImageView extends ImageView implements
                                 TextView time = (TextView) detailContent.findViewById(R.id
                                         .detail_popup_tv_weather_time);
                                 time.setText("发布时间:" + BytesUtil.formatTime(Param.weaherDetail[i].time.toCharArray())
-                                );*/
+                                );*//*
                                 popupWindow = new PopupWindow(detailContent, -2, -2);
                                 //需要注意的是:使用popupwindow,必须设置背景,不然动画效果不能展示
                                 popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -176,11 +177,11 @@ public class ZoomImageView extends ImageView implements
                                 detailContent.startAnimation(animation);
                                 inFlag = true;
                                 //添加语音读功能;
-                                /*MapFragment.tts.speak(Param.AREA_NAME[i] + Param.seperator +
+                                *//*MapFragment.tts.speak(Param.AREA_NAME[i] + Param.seperator +
                                                 Param.weatherName[Param.weaherDetail[i].weatherType] + Param.seperator +
                                                 Param.weaherDetail[i].wind_power + "," + Param.seperator +
                                                 Param.weaherDetail[i].text,
-                                        TextToSpeech.QUEUE_FLUSH, null);*/
+                                        TextToSpeech.QUEUE_FLUSH, null);*//*
                                 break;
                             }
                         }
@@ -189,7 +190,7 @@ public class ZoomImageView extends ImageView implements
                             dismissPopupWindow();
                         }
                         return super.onSingleTapConfirmed(e);
-                    }
+                    }*/
                 });
 
 
@@ -588,67 +589,72 @@ public class ZoomImageView extends ImageView implements
         float currentScale = (rect.right - rect.left) / getWidth();
 
         //显示天气
-        if (weathers != null) {
-            for (int i = 1; i < Param.seaAreas2.length; i++) {
+        if (Param.map2SeaBean.get(Param.CURRENT_POSITION).weathers != null) {
+            SeaBean bean = Param.map2SeaBean.get(Param.CURRENT_POSITION);
+            WeatherBean[][] ws = bean.weathers;
+
+            for (int i = 1; i < bean.seaAreas.length; i++) {
                 canvas.drawBitmap(
                         Param.memoryCache.get(
-                                Param.weatherIcon[weathers[i - 1][0].weatherType1],
-                                Param.weatherIcon[weathers[i - 1][0].weatherType2],
+                                Param.weatherIcon[ws[i - 1][0].weatherType1],
+                                Param.weatherIcon[ws[i - 1][0].weatherType2],
                                 R.drawable.north1,
-                                weathers[i - 1][0].earlyWarning),
-                        rect.centerX() + Param.seaAreaPoint4SHANDONG[i].x * currentScale,
-                        rect.centerY() + Param.seaAreaPoint4SHANDONG[i].y * currentScale,
+                                ws[i - 1][0].earlyWarning),
+                        rect.centerX() + bean.locaters[i].x * currentScale,
+                        rect.centerY() + bean.locaters[i].y * currentScale,
                         paint);
             }
-        }
 
-        // TODO: 2017/5/31 0031 现在只能把台风画出来，但是最后一个轨迹点的风圈还没画出来；
-        if (!Param.IsTyphonClear) {
-            // path.reset();重新画路径啊；
-            for (int i = 0; i < Param.typhoonPaths.length; i++) {
-                Param.typhoonPaths[i].reset();
-            }
 
-            if (Param.typhoonMap.size() > 0) {
-                int k = 0; // 表示为第几个台风
-                for (Map.Entry<Integer, ArrayList<Locater>> entry : Param.typhoonMap.entrySet()) {
-                    int typhooNo = entry.getKey();
-                    Log.d("###", "onDraw: 当前的台风号" + typhooNo + "  k=" + k);
-                    ArrayList<Locater> list = entry.getValue();
-                    //目前颜色库中只支持5中台风.
-                    paint.setColor(Param.colors[k % 5]);
-                    paint.setStyle(Paint.Style.FILL);
+            // TODO: 2017/5/31 0031 现在只能把台风画出来，但是最后一个轨迹点的风圈还没画出来；
+            if (!Param.IsTyphonClear) {
+                // path.reset();重新画路径啊；
+                for (int i = 0; i < Param.typhoonPaths.length; i++) {
+                    Param.typhoonPaths[i].reset();
+                }
 
-                    for (int i = 0; i < list.size(); i++) {
-                        float x = rect.centerX() + list.get(i).x * currentScale;
-                        float y = rect.centerY() + list.get(i).y * currentScale;
-                        // 先绘制该条台风轨迹中的点
-                        canvas.drawCircle(x, y, 5, paint);
-                        if (list.size() == 1) {
-                            //当前列表只有一个元素时,只画点
-                            Log.d("###", "onDraw: 当前只有1个点---" + k);
-                            paint.setTextSize(15);
-                            paint.setShader(null);
-                            canvas.drawText("第" + typhooNo + "号台风", x, y, paint);
-                        } else {
-                            if (i == 0) {
-                                // 第一个点设置轨迹的起始位置,并添加台风号码说明.
+                if (bean.typhoonMap.size() > 0) {
+                    int k = 0; // 表示为第几个台风
+                    for (Map.Entry<String, ArrayList<Locater>> entry : bean.typhoonMap.entrySet()) {
+//                        int typhooNo = entry.getKey();
+                        String typhooName = entry.getKey();
+                        Log.d("###", "onDraw: 当前的台风名字" + typhooName + "  k=" + k);
+                        ArrayList<Locater> list = entry.getValue();
+                        //目前颜色库中只支持5中台风.
+                        paint.setColor(Param.colors[k % 5]);
+                        paint.setStyle(Paint.Style.FILL);
+
+                        for (int i = 0; i < list.size(); i++) {
+                            float x = rect.centerX() + list.get(i).x * currentScale;
+                            float y = rect.centerY() + list.get(i).y * currentScale;
+                            // 先绘制该条台风轨迹中的点
+                            canvas.drawCircle(x, y, 5, paint);
+                            if (list.size() == 1) {
+                                //当前列表只有一个元素时,只画点
+                                Log.d("###", "onDraw: 当前只有1个点---" + k);
                                 paint.setTextSize(15);
                                 paint.setShader(null);
-                                canvas.drawText("第" + typhooNo + "号台风", x, y, paint);
-                                Param.typhoonPaths[k].moveTo(x, y);
-                            } else if (i == list.size() - 1) {
-                                Param.typhoonPaths[k].lineTo(x, y);
-                                Param.typhoonPaths[k].setLastPoint(x, y);
-                                paint.setStyle(Paint.Style.STROKE);
-                                Log.d("###", "最后drawPath绘制线条--->" + k);
-                                canvas.drawPath(Param.typhoonPaths[k], paint);
+                                canvas.drawText("台风" + typhooName, x, y, paint);
                             } else {
-                                Param.typhoonPaths[k].lineTo(x, y);
+                                if (i == 0) {
+                                    // 第一个点设置轨迹的起始位置,并添加台风号码说明.
+                                    paint.setTextSize(15);
+                                    paint.setShader(null);
+                                    canvas.drawText("台风" + typhooName, x, y, paint);
+                                    Param.typhoonPaths[k].moveTo(x, y);
+                                } else if (i == list.size() - 1) {
+                                    Param.typhoonPaths[k].lineTo(x, y);
+                                    Param.typhoonPaths[k].setLastPoint(x, y);
+                                    paint.setStyle(Paint.Style.STROKE);
+                                    Log.d("###", "最后drawPath绘制线条--->" + k);
+                                    canvas.drawPath(Param.typhoonPaths[k], paint);
+                                } else {
+                                    Param.typhoonPaths[k].lineTo(x, y);
+                                }
                             }
                         }
+                        k++;
                     }
-                    k++;
                 }
             }
         }

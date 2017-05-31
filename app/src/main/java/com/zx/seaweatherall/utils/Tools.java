@@ -3,6 +3,7 @@ package com.zx.seaweatherall.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.util.Log;
 
 import com.zx.seaweatherall.Param;
@@ -10,6 +11,7 @@ import com.zx.seaweatherall.R;
 import com.zx.seaweatherall.bean.Locater;
 import com.zx.seaweatherall.bean.Locator2;
 import com.zx.seaweatherall.bean.SeaArea;
+import com.zx.seaweatherall.bean.SeaBean;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,7 +41,22 @@ public class Tools {
     }
 
 
-    *//***
+
+    */
+    //针对gps和点击选区域;
+    public static final double SHANDONG0_ORIGINAL_X = 98.7379;
+    public static final double SHANDONG0_ORIGINAL_Y = 41.23107;
+    public static final double SHANDONG0_ORIGINAL_INTERVAL = 38.9768;
+
+    public static final double MAOMING0_ORIGINAL_X = 98.7379;
+    public static final double MAOMING0_ORIGINAL_Y = 41.23107;
+    public static final double MAOMING0_ORIGINAL_INTERVAL = 38.9768;
+
+    //茂名第二个图好像不用那啥吧~
+    public static final double MAOMING1_ORIGINAL_X = 98.7379;
+    public static final double MAOMING1_ORIGINAL_Y = 41.23107;
+    public static final double MAOMING1_ORIGINAL_INTERVAL = 38.9768;
+    /***
      * 目前采用的是这个版本
      *
      * @param locator2 获取到的gps经纬度封装;
@@ -172,51 +189,9 @@ public class Tools {
 
     */
 
-    /***
-     * 查看p是否在区域中;
-     * <p>
-     * 遍历18个海区;
-     * 当前坐标p,并不是相对中心点的,而是相对于移动端原始view的大小;
-     *
-     * @return
-     */
-    public static boolean pInQuadrangle(SeaArea seaArea, Locater p) {
-        double dTriangle = -1;
-        if (seaArea.size == 4) {
-            dTriangle = triangleArea(seaArea.a, seaArea.b, p)
-                    + triangleArea(seaArea.b, seaArea.c, p)
-                    + triangleArea(seaArea.c, seaArea.d, p)
-                    + triangleArea(seaArea.d, seaArea.a, p);
-        } else if (seaArea.size == 5) {
-            dTriangle = triangleArea(seaArea.a, seaArea.b, p)
-                    + triangleArea(seaArea.b, seaArea.c, p)
-                    + triangleArea(seaArea.c, seaArea.d, p)
-                    + triangleArea(seaArea.d, seaArea.e, p)
-                    + triangleArea(seaArea.e, seaArea.a, p);
-        }
-        return dTriangle == seaArea.area;
-    }
 
-    // 返回三个点组成三角形的面积,既然面积这么算最多也就是个double,那么直接传入整数吧;
-    //全部转为整数,所得的面积最多是xxx.5,可以用==精确比对,缺点是:存在各个海区的边界值误差
-    private static double triangleArea(Locater a, Locater b, Locater c) {
-        double result = Math.abs((a.x * b.y + b.x * c.y + c.x * a.y - b.x * a.y
-                - c.x * b.y - a.x * c.y) / 2.0);
-        return result;
-    }
-
-    //计算四边形面积
-    private static double triangleArea(Locater a, Locater b, Locater c, Locater d) {
-        return triangleArea(a, b, c) + triangleArea(c, d, a);
-    }
-
-    //计算五边形面积
-    private static double triangleArea(Locater a, Locater b, Locater c, Locater d, Locater e) {
-        return triangleArea(a, b, c) + triangleArea(a, c, d) + triangleArea(a, d, e);
-    }
-
-    //返回所在哪个区域
-    public static int whichArea(Locator2 locator2) {
+    //TODO:返回所在哪个区域
+/*    public static int whichArea(Locator2 locator2) {
         Locater lo = new Locater((int) (locator2.x + 0.5), (int) (locator2.y + 0.5));
         for (int i = 0; i < Param.seaAreas2.length; i++) {
             if (Tools.pInQuadrangle(Param.seaAreas2[i], lo)) {
@@ -224,14 +199,15 @@ public class Tools {
             }
         }
         return 0;
-    }
+    }*/
 
-    public static void initMapPic() {
+    public static void initMapPic(Context context) {
         int index = 0;
         if ((Param.my_authority & 0x01) > 0) {
             Param.AUTHORITY[Param.SHANDONG] = true;
             Param.MAP_PIC.add(R.drawable.p1);
             Param.map2position.put(Param.SHANDONG_0, index);
+            Param.map2SeaBean.put(Param.SHANDONG_0, new SeaBean(context, Param.SHANDONG_0, index));
             index++;
         }
 
@@ -240,8 +216,10 @@ public class Tools {
             Param.MAP_PIC.add(R.drawable.p2);
             Param.MAP_PIC.add(R.drawable.p3);
             Param.map2position.put(Param.MAOMING_0, index);
+            Param.map2SeaBean.put(Param.SHANDONG_0, new SeaBean(context, Param.SHANDONG_0, index));
             index++;
             Param.map2position.put(Param.MAOMING_1, index);
+            Param.map2SeaBean.put(Param.SHANDONG_0, new SeaBean(context, Param.SHANDONG_0, index));
             index++;
         }
 

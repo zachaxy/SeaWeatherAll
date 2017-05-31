@@ -6,6 +6,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.zx.seaweatherall.bean.Locater;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+
+import static android.R.attr.key;
+
 /**
  * Created by zhangxin on 2017/5/26 0026.
  * <p>
@@ -40,6 +47,7 @@ public class DBUtils {
     // TODO: 2017/5/26 0026 还不知道能不能插入浮点数；
     private static final String CREATE_TYPHOON = "create table if not exists typhoon( "
             + "id integer primary key autoincrement,"
+            + "areaNo interger,"
             + "typhoonNo interger,"
             + "typhoonName text"
             + "typhoonContent text"
@@ -48,7 +56,7 @@ public class DBUtils {
 
     private static final int MAX_TABLE_SIZE = 200;
     private static DBUtils sDBUtis;
-    private SQLiteDatabase mSQLiteDatabase;
+    public SQLiteDatabase mSQLiteDatabase; // 严重的破坏了封装性，可以也没别的办法啊；
 
     private DBUtils(Context context) {
         mSQLiteDatabase = new DBHelper(context, "seaWeather.db").getWritableDatabase();
@@ -112,6 +120,14 @@ public class DBUtils {
         }
         cursor.close();
         return isRead;
+    }
+
+
+    public void queryTyphoon(int areaNO) {
+        Cursor cursor = mSQLiteDatabase.query("typhoon", null, "areaNO=?",
+                new String[]{String.valueOf(areaNO)}, null, null, null);
+        LinkedHashMap<String, ArrayList<Locater>> typhoonMap = new LinkedHashMap<>();
+
     }
 
     public class DBHelper extends SQLiteOpenHelper {

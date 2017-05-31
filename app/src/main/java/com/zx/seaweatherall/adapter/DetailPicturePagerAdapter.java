@@ -53,7 +53,8 @@ public class DetailPicturePagerAdapter extends PagerAdapter {
             }
             mCurrentZoomImageView = (ZoomImageView) object;
             MapFragment.currentZoomView = mCurrentZoomImageView;
-            mCurrentZoomImageView.weathers = (WeatherBean[][]) mAcache.getAsObject("weather" + Param.CURRENT_POSITION);
+//            mCurrentZoomImageView.weathers = (WeatherBean[][]) mAcache.getAsObject("weather" + Param.CURRENT_POSITION);
+
         }
     }
 

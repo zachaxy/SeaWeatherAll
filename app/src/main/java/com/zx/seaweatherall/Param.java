@@ -7,6 +7,7 @@ import android.graphics.Path;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.zx.seaweatherall.bean.Locater;
 import com.zx.seaweatherall.bean.SeaArea;
+import com.zx.seaweatherall.bean.SeaBean;
 import com.zx.seaweatherall.utils.BitmapLruCache;
 
 import java.util.ArrayList;
@@ -167,7 +168,7 @@ public class Param {
     public static boolean totalFlag = true;
 
     //PC端图片的大小;
-    public final static double ORIGINAL_IMAGE_SIZE = 4677.0;
+    public final static double ORIGINAL_IMAGE_SIZE = 1500.0;//4677.0;
 
     //移动端图片的大小;
     public final static double ACTUAL_IMAGE_SIZE = 800.0;
@@ -185,77 +186,15 @@ public class Param {
 
     //山东远海区
     public static final int SHANDONG_FAR_SEA_AREA_COUNT = 18;
-    public static final String[] SHANDONG_AREA_NAME = {
-            "中国",
-            "渤海",
-            "渤海海峡",
-            "黄海北部",
-            "黄海中部",
-            "黄海南部",
-            "东海北部",
-            "东海南部",
-            "台湾海峡",
-            "台湾省以东",
-            "巴士海峡",
-            "北部湾",
-            "琼州海峡",
-            "南海西北部",
-            "南海东北部",
-            "南海中西部",
-            "南海中东部",
-            "南海西南部",
-            "南海东南部",
-    };
 
-    //这里表示的是天气图标的显示位置;
-    public static final Locater[] seaAreaPoint4SHANDONG = {
-            new Locater(0, 0),
-            new Locater(39, -365),
-            new Locater(64, -338),
-            new Locater(109, -356),
-            new Locater(113, -303),
-            new Locater(116, -254),
-            new Locater(178, -203),
-            new Locater(116, -119),
-            new Locater(4, -43),
-            new Locater(97, -37),
-            new Locater(63, 33),
-            new Locater(-244, 39),
-            new Locater(-168, 27),
-            new Locater(-113, 19),
-            new Locater(-39, 18),
-            new Locater(-147, 108),
-            new Locater(-20, 104),
-            new Locater(-138, 204),
-            new Locater(-31, 204)
-    };
+
+
 
     //茂名
     public static final int MAOMING_FAR_AREA_COUNT = 18;
     public static final int MAOMING_NEAR_AREA_COUNT = 10;
     public static final int MAOMING_FISH_AREA_COUNT = 23;
 
-    public static final String[] MAOMING_FAR_AREA_NAME = {
-            "中国",
-            "台湾海峡",
-            "汕头附近海面",
-            "汕尾附近海面",
-            "珠江口外海面",
-            "珠江口内海面",
-            "川山群岛附近海面",
-            "湛江附近海面",
-            "琼州海峡",
-            "北部湾",
-            "海南岛西南部",
-            "西沙",
-            "东沙",
-            "中沙",
-            "巴士海峡",
-            "南沙",
-            "华列拉",
-            "头顿",
-            "曾母暗沙",
-    };
 
     public static final String[] MAOMING_NEAR_AREA_NAME = {
             "中国",
@@ -294,6 +233,7 @@ public class Param {
     public static ArrayList<Integer> MAP_PIC = new ArrayList<>();
     //使用场景，如果接受到某一地点的气象，需要切换到对应地图，索引为地区（SHANDONG_0。。。），值为ViewPager中的position；
     public static HashMap<Integer, Integer> map2position = new HashMap<>();
+    public static HashMap<Integer, SeaBean> map2SeaBean = new HashMap<>();
 
 
     //ViewPager中展示的是哪个地图,注意这里显示的不是VP的index，而是SHANDONG_0，表示位置的，值的复制是在解析消息的时候赋值的；
@@ -308,25 +248,13 @@ public class Param {
 
     public static final Path[] typhoonPaths = {new Path(), new Path(), new Path(), new Path(), new Path()};
 
-    public static LinkedHashMap<Integer, ArrayList<Locater>> typhoonMap =
-            new LinkedHashMap<Integer, ArrayList<Locater>>();
-
-    public static LinkedHashMap<Integer, ArrayList<Locater>> typhoonMap4SHANDONG =
-            new LinkedHashMap<Integer, ArrayList<Locater>>();
-
-    public static LinkedHashMap<Integer, ArrayList<Locater>> typhoonMap4MAOMING0 =
-            new LinkedHashMap<Integer, ArrayList<Locater>>();
-
-    public static LinkedHashMap<Integer, ArrayList<Locater>> typhoonMap4MAOMING1 =
-            new LinkedHashMap<Integer, ArrayList<Locater>>();
-
 
     //GPS的绘制
     public static Bitmap currentIndicator;
 
 
     //这里规划的是整个海区的区域;同上面的seaAraes显示的天气图标位置不同;
-    public static final SeaArea[] seaAreas2 = {
+/*    public static final SeaArea[] seaAreas2 = {
             new SeaArea(),
             new SeaArea(new Locater(458, 2), new Locater(473, 14), new Locater(438, 82), new Locater(399, 39), 2710.0),
             new SeaArea(new Locater(459, 44), new Locater(447, 66), new Locater(490, 73), new Locater(474, 38), 825.5),
@@ -360,7 +288,7 @@ public class Param {
             new SeaArea(new Locater(213, 557), new Locater(73, 753), new Locater(314, 753), new Locater(314, 557),
                     33516.0),
             new SeaArea(new Locater(314, 557), new Locater(314, 753), new Locater(520, 753), new Locater(442, 557), 32732.0),
-    };
+    };*/
 
     //缓存图标类,避免内存溢出
     public static BitmapLruCache memoryCache = BitmapLruCache.getCache();

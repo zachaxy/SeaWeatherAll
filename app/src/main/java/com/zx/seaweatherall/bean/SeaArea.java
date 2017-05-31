@@ -13,6 +13,8 @@ public class SeaArea {
     public Locater c;
     public Locater d;
     public Locater e;
+    public Locater f;
+    public Locater g;
 
 
     //别提供get方法了,直接计算好算了;
@@ -37,5 +39,29 @@ public class SeaArea {
         this.area = area;
     }
 
-    public SeaArea(){}
+    public SeaArea(Locater a, Locater b, Locater c, Locater d, Locater e, Locater f, double area) {
+        size = 7;
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
+        this.e = e;
+        this.f = f;
+        this.area = area;
+    }
+
+    public SeaArea(Locater a, Locater b, Locater c, Locater d, Locater e, Locater f, Locater g, double area) {
+        size = 7;
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
+        this.e = e;
+        this.f = f;
+        this.g = g;
+        this.area = area;
+    }
+
+    public SeaArea() {
+    }
 }

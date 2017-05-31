@@ -70,6 +70,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static android.R.attr.breadCrumbShortTitle;
 import static android.R.attr.data;
 
 
@@ -1131,7 +1132,20 @@ public class MapFragment extends Fragment {
         if (whatMsg == TYPHOON) {
             //台风不做任何判断，直接显示；
             Log.e(TAG, "parseWeather: 解析台风");
-            return parseTyphoon(data, weatherIndex, timeStamp);
+            int areaNo = -1;
+            switch (company) {
+                case Param.SHANDONG:
+                    areaNo = Param.SHANDONG_0;
+                    break;
+                case Param.MAOMING:
+                    areaNo = Param.MAOMING_0;
+                    break;
+                case Param.ZHOUSHAN:
+                    areaNo = Param.ZHOUSHAN_0;
+                    break;
+            }
+            Param.CURRENT_POSITION = areaNo;
+            return parseTyphoon(data, weatherIndex, timeStamp, areaNo);
         } else {
             //如果不是特殊天气，先看一下自己有没有这个权限可以接收，如果自己不能接受，直接返回；
             if (!isSpecial && !Param.AUTHORITY[company]) {
@@ -1549,7 +1563,7 @@ public class MapFragment extends Fragment {
      * @param data
      * @param weatherIndex
      */
-    TyphoonBean parseTyphoon(byte[] data, int weatherIndex, String timeStamp) {
+    TyphoonBean parseTyphoon(byte[] data, int weatherIndex, String timeStamp, int areaNo) {
         int typhoonNo = data[weatherIndex++];
         int typhoonNameLen = 10;
 
@@ -1600,7 +1614,8 @@ public class MapFragment extends Fragment {
 
         int typhoonY = getLocation(data, weatherIndex);
         weatherIndex += 4;
-        // TODO
+        // TODO 位置还没有转换
+
 
 
         //下面处理轨迹点登陆时间,6字节;
@@ -1674,6 +1689,7 @@ public class MapFragment extends Fragment {
             typhoonContent.append("未知内容");
         }
         ContentValues typhoonValues = new ContentValues();
+        typhoonValues.put("areaNo", areaNo);
         typhoonValues.put("typhoonNo", typhoonNo);
         typhoonValues.put("typhoonName", typhoonName);
         typhoonValues.put("typhoonContent", typhoonContent.toString());
@@ -1866,21 +1882,8 @@ public class MapFragment extends Fragment {
 
     private String formatWeathers() {
         StringBuilder sb = new StringBuilder();
-        String[] areaName = null;
-        switch (Param.CURRENT_POSITION) {
-            case Param.SHANDONG_0:
-                areaName = Param.SHANDONG_AREA_NAME;
-                break;
-            case Param.MAOMING_0:
-                areaName = Param.MAOMING_FAR_AREA_NAME;
-                break;
-            case Param.MAOMING_1:
-                areaName = Param.MAOMING_NEAR_AREA_NAME;
-                break;
-            case Param.ZHOUSHAN_0:
-                break;
-        }
-
+        String[] areaName = Param.map2SeaBean.get(Param.CURRENT_POSITION).areaNames;
+        WeatherBean[][] ws = Param.map2SeaBean.get(Param.CURRENT_POSITION).weathers;
         if (areaName != null) {
 
             for (int i = 0; i < areaLists.size(); i++) {//外层循环，分为多少组
@@ -1888,10 +1891,10 @@ public class MapFragment extends Fragment {
                 for (int nameIndex : list) { //拼接各区域名字
                     sb.append(areaName[nameIndex]).append(",");
                 }
-                //内存循环，连续7天的
+                //内层循环，连续7天的
                 for (int j = 0; j < weathers[0].length; j++) {
                     sb.append("第").append(j).append("天的天气预报：")
-                            .append(currentZoomView.weathers[list.get(0)][j].getMsgContent()).append("\n");
+                            .append(ws[list.get(0)][j].getMsgContent()).append("\n");
                 }
 
             }
@@ -1959,7 +1962,7 @@ public class MapFragment extends Fragment {
                         TyphoonBean bean = (TyphoonBean) iMsg;
                         addRecentMsg(new RecentMsg(R.drawable.w38, bean.getMsgContent(), bean.timeStamp));
                     } else { //气象信息，多组的，需要重新拼装一下信息；注意，所有的消息都在全局变量的二维数组中；
-                        currentZoomView.weathers = weathers; //之前可能经历过一次读缓存，但是最终是以这个为准；
+//                        sscurrentZoomView.weathers = weathers; //之前可能经历过一次读缓存，但是最终是以这个为准；
 //                        currentZoomView.invalidate();
                         addRecentMsg(new RecentMsg(R.drawable.w1, formatWeathers(), iMsg.getTimeStamp()));
                         // TODO: 2017/5/30 0030 对于其onDraw的顺序还不确定；
@@ -2002,7 +2005,7 @@ public class MapFragment extends Fragment {
                     showDialog(Param.param + "设置无响应");
                     break;
                 case 23: // 接受到UID
-                    Tools.initMapPic();
+                    Tools.initMapPic(getActivity());
                     vpAdapter.notifyDataSetChanged();
                     break;
                 case 36:

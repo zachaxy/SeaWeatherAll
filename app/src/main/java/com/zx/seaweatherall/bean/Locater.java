@@ -1,6 +1,8 @@
 package com.zx.seaweatherall.bean;
 
-public class Locater {
+import java.io.Serializable;
+
+public class Locater implements Serializable{
 	public int x;
 	public int y;
 	public String text = "";
