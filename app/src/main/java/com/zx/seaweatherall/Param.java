@@ -1,5 +1,8 @@
 package com.zx.seaweatherall;
 
+import android.graphics.Color;
+import android.graphics.Path;
+
 import com.felhr.usbserial.UsbSerialDevice;
 import com.zx.seaweatherall.bean.Locater;
 
@@ -153,6 +156,28 @@ public class Param {
             "南海东南部",
     };
 
+    //这里表示的是天气图标的显示位置;
+    public static final Locater[] seaAreaPoint4SHANDONG = {
+            new Locater(0, 0),
+            new Locater(39, -365),
+            new Locater(64, -338),
+            new Locater(109, -356),
+            new Locater(113, -303),
+            new Locater(116, -254),
+            new Locater(178, -203),
+            new Locater(116, -119),
+            new Locater(4, -43),
+            new Locater(97, -37),
+            new Locater(63, 33),
+            new Locater(-244, 39),
+            new Locater(-168, 27),
+            new Locater(-113, 19),
+            new Locater(-39, 18),
+            new Locater(-147, 108),
+            new Locater(-20, 104),
+            new Locater(-138, 204),
+            new Locater(-31, 204)
+    };
 
     //茂名
     public static final int MAOMING_FAR_AREA_COUNT = 18;
@@ -227,6 +252,21 @@ public class Param {
     public static int AREA_NO;
 
 
-    public static LinkedHashMap<Integer, ArrayList<Locater>> typhoonMap = new LinkedHashMap<Integer, ArrayList<Locater>>();
+    // 台风绘制的设置；
+    public static final int[] colors = {Color.RED, Color.YELLOW, Color.GREEN, Color.CYAN, Color.MAGENTA};
+
+    public static final Path[] typhoonPaths = {new Path(), new Path(), new Path(), new Path(), new Path()};
+
+    public static LinkedHashMap<Integer, ArrayList<Locater>> typhoonMap =
+            new LinkedHashMap<Integer, ArrayList<Locater>>();
+
+    public static LinkedHashMap<Integer, ArrayList<Locater>> typhoonMap4SHANDONG =
+            new LinkedHashMap<Integer, ArrayList<Locater>>();
+
+    public static LinkedHashMap<Integer, ArrayList<Locater>> typhoonMap4MAOMING0 =
+            new LinkedHashMap<Integer, ArrayList<Locater>>();
+
+    public static LinkedHashMap<Integer, ArrayList<Locater>> typhoonMap4MAOMING1 =
+            new LinkedHashMap<Integer, ArrayList<Locater>>();
 
 }

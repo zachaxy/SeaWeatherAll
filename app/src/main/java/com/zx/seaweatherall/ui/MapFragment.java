@@ -1591,11 +1591,14 @@ public class MapFragment extends Fragment {
                 break;
         }
 
-        double typhoonX = getLocation(data, weatherIndex);
+        //我感觉这样做不是效率低的问题，而是傻不傻的问题；
+        int typhoonX = getLocation(data, weatherIndex);
         weatherIndex += 4;
 
-        double typhoonY = getLocation(data, weatherIndex);
+        int typhoonY = getLocation(data, weatherIndex);
         weatherIndex += 4;
+        // TODO
+
 
         //下面处理轨迹点登陆时间,6字节;
         int typhoonTimeLen = 6;
@@ -1682,17 +1685,18 @@ public class MapFragment extends Fragment {
 
     /***
      * 拿到data中四个字节代表的坐标;
-     *
+     * sb，居然用三个字节表示后面的小数点，我不处理小数的，干脆直接拿前面的整数算了。++；
      * @param data
      * @param weatherIndex
      * @return 返回经纬度坐标;
      */
-    double getLocation(byte[] data, int weatherIndex) {
+    int getLocation(byte[] data, int weatherIndex) {
         int typhoonX1 = data[weatherIndex++];
-        byte[] typhoonX2 = {data[weatherIndex++], data[weatherIndex++], data[weatherIndex++]};
+        /*byte[] typhoonX2 = {data[weatherIndex++], data[weatherIndex++], data[weatherIndex++]};
         int typhoonX3 = Integer.valueOf(StrUtil.bytesToHexString(typhoonX2), 16);
         int res = StrUtil.getIntergerLength(typhoonX3);
-        return typhoonX1 + typhoonX3 * 1.0 / res;
+        return typhoonX1 + typhoonX3 * 1.0 / res;*/
+        return typhoonX1;
     }
 
 

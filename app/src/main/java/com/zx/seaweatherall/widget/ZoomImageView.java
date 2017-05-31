@@ -12,6 +12,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.speech.tts.TextToSpeech;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -36,6 +37,8 @@ import com.zx.seaweatherall.utils.BytesUtil;
 import com.zx.seaweatherall.utils.Tools;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Description :
@@ -576,13 +579,68 @@ public class ZoomImageView extends ImageView implements
         super.onDraw(canvas);
         RectF rect = getMatrixRectF();
 
+        // 去除锯齿
+//        paint.setAntiAlias(true);
+        // paint.setColor(Color.RED);
+        // paint.setStyle(Paint.Style.FILL);
+        paint.setStrokeWidth(2);
+        float currentScale = (rect.right - rect.left) / getWidth();
+
         //显示天气
-        if (weathers!=null){
+        if (weathers != null) {
 
         }
 
-        //显示台风
+        // TODO: 2017/5/31 0031 现在只能把台风画出来，但是最后一个轨迹点的风圈还没画出来；
+        if (!Param.IsTyphonClear) {
+            // path.reset();重新画路径啊；
+            for (int i = 0; i < Param.typhoonPaths.length; i++) {
+                Param.typhoonPaths[i].reset();
+            }
 
+            if (Param.typhoonMap.size() > 0) {
+                int k = 0; // 表示为第几个台风
+                for (Map.Entry<Integer, ArrayList<Locater>> entry : Param.typhoonMap.entrySet()) {
+                    int typhooNo = entry.getKey();
+                    Log.d("###", "onDraw: 当前的台风号" + typhooNo + "  k=" + k);
+                    ArrayList<Locater> list = entry.getValue();
+                    //目前颜色库中只支持5中台风.
+                    paint.setColor(Param.colors[k % 5]);
+                    paint.setStyle(Paint.Style.FILL);
+
+                    for (int i = 0; i < list.size(); i++) {
+                        float x = rect.centerX() + list.get(i).x * currentScale;
+                        float y = rect.centerY() + list.get(i).y * currentScale;
+                        // 先绘制该条台风轨迹中的点
+                        canvas.drawCircle(x, y, 5, paint);
+                        if (list.size() == 1) {
+                            //当前列表只有一个元素时,只画点
+                            Log.d("###", "onDraw: 当前只有1个点---" + k);
+                            paint.setTextSize(15);
+                            paint.setShader(null);
+                            canvas.drawText("第" + typhooNo + "号台风", x, y, paint);
+                        } else {
+                            if (i == 0) {
+                                // 第一个点设置轨迹的起始位置,并添加台风号码说明.
+                                paint.setTextSize(15);
+                                paint.setShader(null);
+                                canvas.drawText("第" + typhooNo + "号台风", x, y, paint);
+                                Param.typhoonPaths[k].moveTo(x, y);
+                            } else if (i == list.size() - 1) {
+                                Param.typhoonPaths[k].lineTo(x, y);
+                                Param.typhoonPaths[k].setLastPoint(x, y);
+                                paint.setStyle(Paint.Style.STROKE);
+                                Log.d("###", "最后drawPath绘制线条--->" + k);
+                                canvas.drawPath(Param.typhoonPaths[k], paint);
+                            } else {
+                                Param.typhoonPaths[k].lineTo(x, y);
+                            }
+                        }
+                    }
+                    k++;
+                }
+            }
+        }
     }
 
 

@@ -43,8 +43,10 @@ public class Tools {
      * @return 相对坐标;
      *//*
     public static Locator2 getLoationInView(Locator2 locator2) {
-        double xi = (locator2.x - ORIGINAL_X) * Param.ACTUAL_IMAGE_SIZE / ORIGINAL_INTERVAL - Param.ACTUAL_IMAGE_SIZE / 2;
-        double yi = (ORIGINAL_Y - locator2.y) * Param.ACTUAL_IMAGE_SIZE / ORIGINAL_INTERVAL - Param.ACTUAL_IMAGE_SIZE / 2;
+        double xi = (locator2.x - ORIGINAL_X) * Param.ACTUAL_IMAGE_SIZE / ORIGINAL_INTERVAL - Param.ACTUAL_IMAGE_SIZE
+         / 2;
+        double yi = (ORIGINAL_Y - locator2.y) * Param.ACTUAL_IMAGE_SIZE / ORIGINAL_INTERVAL - Param.ACTUAL_IMAGE_SIZE
+         / 2;
 
         return new Locator2(xi, yi);
     }
@@ -54,7 +56,7 @@ public class Tools {
      * 目前采用的是这个版本
      *
      * @param locator2 获取到的gps经纬度封装;
-     * @return 相对坐标,不是针对中心点的啊;
+     * @return 相对坐标, 不是针对中心点的啊;
      *//*
     public static Locator2 getLoationInView2(Locator2 locator2) {
         double xi = (locator2.x - ORIGINAL_X) * Param.ACTUAL_IMAGE_SIZE / ORIGINAL_INTERVAL;
@@ -165,11 +167,14 @@ public class Tools {
     }
 
 
-    *//***
+    */
+
+    /***
      * 查看p是否在区域中;
+     * <p>
+     * 遍历18个海区;
+     * 当前坐标p,并不是相对中心点的,而是相对于移动端原始view的大小;
      *
-     * @param seaArea 遍历18个海区;
-     * @param p       当前坐标p,并不是相对中心点的,而是相对于移动端原始view的大小;
      * @return
      *//*
     public static boolean pInQuadrangle(SeaArea seaArea, Locater p) {
@@ -217,8 +222,7 @@ public class Tools {
         }
         return 0;
     }*/
-
-    public static void initMapPic(){
+    public static void initMapPic() {
         int index = 0;
         if ((Param.my_authority & 0x01) > 0) {
             Param.AUTHORITY[Param.SHANDONG] = true;
