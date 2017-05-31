@@ -70,6 +70,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static android.R.attr.data;
+
 
 /**
  * Created by zhangxin on 2017/5/26 0026.
@@ -1203,13 +1205,13 @@ public class MapFragment extends Fragment {
                 for (int j = 0; j < forecastCount; j++) { //内层按照预报时间长度分，两天or七天
                     WeatherBean bean;
                     if (company == Param.SHANDONG) {
-                        bean = parseWeatherInShanDong(data, weatherIndex);
+                        bean = parseWeatherInShanDong(timeStamp, data, weatherIndex);
                         weatherIndex += 15;
                     } else if (company == Param.ZHOUSHAN) {
-                        bean = parseWeatherInZhouShan(data, weatherIndex);
+                        bean = parseWeatherInZhouShan(timeStamp, data, weatherIndex);
                         weatherIndex += 19;
                     } else {
-                        bean = parseWeatherInMaoMing(data, weatherIndex, whatMsg == 2);
+                        bean = parseWeatherInMaoMing(timeStamp, data, weatherIndex, whatMsg == 2);
                         weatherIndex += 19;
                     }
                     //天气数据回填;同一个组中，第j天的天气情况；
@@ -1237,9 +1239,9 @@ public class MapFragment extends Fragment {
     }
 
 
-    WeatherBean parseWeatherInMaoMing(byte[] data, int weatherIndex, boolean isEdge) {
+    WeatherBean parseWeatherInMaoMing(String timeStamp, byte[] data, int weatherIndex, boolean isEdge) {
         // TODO: 2017/5/23 0023 在这里把地图索引换了！
-        WeatherBean bean = new WeatherBean();
+        WeatherBean bean = new WeatherBean(timeStamp);
         bean.weatherType1 = data[weatherIndex++];
         bean.weatherType2 = data[weatherIndex++];
         Log.e(TAG, "parseWeatherInMaoMing: 天气类型:" + bean.weatherType1 + "--" + bean.weatherType2);
@@ -1342,13 +1344,14 @@ public class MapFragment extends Fragment {
         bean.desc = desc.toString();
 //        bean.visibility = visible;
 //        bean.waveHeight = waveHeight;
-        bean.earlyWarning = earlyWarning;
+
+        bean.earlyWarning = Param.alarmIcon[earlyWarning];
         return bean;
     }
 
     //舟山和茂名的气相区别在于浪高的处理上,茂名为小数,而这个为整数
-    WeatherBean parseWeatherInZhouShan(byte[] data, int weatherIndex) {
-        WeatherBean bean = new WeatherBean();
+    WeatherBean parseWeatherInZhouShan(String timeStamp, byte[] data, int weatherIndex) {
+        WeatherBean bean = new WeatherBean(timeStamp);
         bean.weatherType1 = data[weatherIndex++];
         bean.weatherType2 = data[weatherIndex++];
 
@@ -1450,8 +1453,8 @@ public class MapFragment extends Fragment {
     }
 
     //山东和前两个的区别是少了阵风的描述;
-    WeatherBean parseWeatherInShanDong(byte[] data, int weatherIndex) {
-        WeatherBean bean = new WeatherBean();
+    WeatherBean parseWeatherInShanDong(String timeStamp, byte[] data, int weatherIndex) {
+        WeatherBean bean = new WeatherBean(timeStamp);
 
         bean.weatherType1 = data[weatherIndex++];
         bean.weatherType2 = data[weatherIndex++];
@@ -1686,6 +1689,7 @@ public class MapFragment extends Fragment {
     /***
      * 拿到data中四个字节代表的坐标;
      * sb，居然用三个字节表示后面的小数点，我不处理小数的，干脆直接拿前面的整数算了。++；
+     *
      * @param data
      * @param weatherIndex
      * @return 返回经纬度坐标;

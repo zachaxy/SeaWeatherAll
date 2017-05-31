@@ -1,10 +1,13 @@
 package com.zx.seaweatherall;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Path;
 
 import com.felhr.usbserial.UsbSerialDevice;
 import com.zx.seaweatherall.bean.Locater;
+import com.zx.seaweatherall.bean.SeaArea;
+import com.zx.seaweatherall.utils.BitmapLruCache;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,6 +85,54 @@ public class Param {
             R.drawable.w8, R.drawable.w9, R.drawable.w9, R.drawable.w20,
             R.drawable.w21, R.drawable.w21,};
 
+    public static final int[] alarmIcon = {
+            R.drawable.w0,
+            R.drawable.a1,
+            R.drawable.a2,
+            R.drawable.a3,
+            R.drawable.a4,
+            R.drawable.a5,
+            R.drawable.a6,
+            R.drawable.a7,
+            R.drawable.a8,
+            R.drawable.a9,
+            R.drawable.a10,
+            R.drawable.a11,
+            R.drawable.a12,
+            R.drawable.a13,
+            R.drawable.a14,
+            R.drawable.a15,
+            R.drawable.a16,
+            R.drawable.a17,
+            R.drawable.a18,
+            R.drawable.a19,
+            R.drawable.a20,
+            R.drawable.a21,
+            R.drawable.a22,
+            R.drawable.a23,
+            R.drawable.a24,
+            R.drawable.a25,
+            R.drawable.a26,
+            R.drawable.a27,
+            R.drawable.a28,
+            R.drawable.a29,
+            R.drawable.a30,
+            R.drawable.a31,
+            R.drawable.a32,
+            R.drawable.a33,
+            R.drawable.a34,
+            R.drawable.a35,
+            R.drawable.a36,
+            R.drawable.a37,
+            R.drawable.a38,
+            R.drawable.a39,
+            R.drawable.a40,
+            R.drawable.a41,
+            R.drawable.a42,
+            R.drawable.a43,
+            R.drawable.a44,
+            R.drawable.a45,
+    };
 
     public static final String[] weatherName = {"",
             "晴", "多云", "阴天", "小雨", "中雨", "大雨", "暴雨", "大暴雨",
@@ -269,4 +320,48 @@ public class Param {
     public static LinkedHashMap<Integer, ArrayList<Locater>> typhoonMap4MAOMING1 =
             new LinkedHashMap<Integer, ArrayList<Locater>>();
 
+
+    //GPS的绘制
+    public static Bitmap currentIndicator;
+
+
+    //这里规划的是整个海区的区域;同上面的seaAraes显示的天气图标位置不同;
+    public static final SeaArea[] seaAreas2 = {
+            new SeaArea(),
+            new SeaArea(new Locater(458, 2), new Locater(473, 14), new Locater(438, 82), new Locater(399, 39), 2710.0),
+            new SeaArea(new Locater(459, 44), new Locater(447, 66), new Locater(490, 73), new Locater(474, 38), 825.5),
+            new SeaArea(new Locater(474, 38), new Locater(490, 73), new Locater(558, 67), new Locater(533, 8), 3353.5),
+            new SeaArea(new Locater(490, 73), new Locater(401, 122), new Locater(579, 122), new Locater(574, 66),
+                    6730.5),
+            new SeaArea(new Locater(418, 122), new Locater(478, 186), new Locater(563, 158), new Locater(579, 122),
+                    6458.0),
+            new SeaArea(new Locater(563, 158), new Locater(323, 240), new Locater(615, 240), new Locater(672, 153),
+                    16571.0),
+            new SeaArea(new Locater(478, 240), new Locater(411, 321), new Locater(550, 326), new Locater(615, 240),
+                    11688.0),
+            new SeaArea(new Locater(411, 321), new Locater(358, 369), new Locater(412, 407), new Locater(456, 328),
+                    4234.5),
+            new SeaArea(new Locater(456, 328), new Locater(451, 407), new Locater(518, 407), new Locater(550, 326),
+                    6421.5),
+            new SeaArea(new Locater(411, 407), new Locater(411, 462), new Locater(518, 462), new Locater(518, 407),
+                    5885.0),
+            new SeaArea(new Locater(139, 374), new Locater(141, 504), new Locater(203, 459), new Locater(225, 400),
+                    6898.0),
+            new SeaArea(new Locater(224, 412), new Locater(213, 434), new Locater(249, 430), new Locater(238, 406),
+                    575.0),
+            new SeaArea(new Locater(249, 430), new Locater(230, 462), new Locater(314, 462), new Locater(314, 381),
+                    new Locater(238, 406), 5026.0),
+            new SeaArea(new Locater(314, 336), new Locater(314, 462), new Locater(412, 462), new Locater(412, 407),
+                    8869.0),
+            new SeaArea(new Locater(203, 459), new Locater(78, 557), new Locater(314, 557), new Locater(314, 462),
+                    16836.5),
+            new SeaArea(new Locater(314, 462), new Locater(314, 557), new Locater(442, 557), new Locater(447, 462),
+                    12397.5),
+            new SeaArea(new Locater(213, 557), new Locater(73, 753), new Locater(314, 753), new Locater(314, 557),
+                    33516.0),
+            new SeaArea(new Locater(314, 557), new Locater(314, 753), new Locater(520, 753), new Locater(442, 557), 32732.0),
+    };
+
+    //缓存图标类,避免内存溢出
+    public static BitmapLruCache memoryCache = BitmapLruCache.getCache();
 }

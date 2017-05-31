@@ -2,14 +2,19 @@ package com.zx.seaweatherall;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.zx.seaweatherall.ui.MainActivity;
+import com.zx.seaweatherall.utils.BitmapLruCache;
 import com.zx.seaweatherall.utils.DBUtils;
+import com.zx.seaweatherall.utils.SingleBitmapLruCache;
 import com.zx.seaweatherall.utils.SymEncrypt;
 import com.zx.seaweatherall.utils.Tools;
 import com.zxy.recovery.callback.RecoveryCallback;
 import com.zxy.recovery.core.Recovery;
+
+import static com.zx.seaweatherall.Param.currentIndicator;
 
 /**
  * Created by zhangxin on 2017/5/26 0026.
@@ -54,6 +59,12 @@ public class SeaWeatherApp extends Application {
         initMapPic(sp);
 
         DBUtils.init(this);
+        //初始化GPS坐标；
+        Param.currentIndicator = BitmapFactory.decodeResource(getResources(), R.drawable.location);
+
+        //初始化缓存
+        SingleBitmapLruCache.setContext(this);
+        BitmapLruCache.setContext(this);
     }
 
     // TODO: 2017/5/26 0026  还差舟山渔场；

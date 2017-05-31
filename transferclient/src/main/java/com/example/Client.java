@@ -3,9 +3,29 @@ package com.example;
 import java.util.ArrayList;
 
 public class Client {
+    int[] datas;
 
     public static void main(String[] args) {
-        func1();
+//        func1();
+//            func();
+
+        Client c = new Client();
+        c.init();
+        for (int i = 0; i < c.datas.length; i++) {
+            System.out.println(c.datas[i]);
+        }
+    }
+
+
+    void init() {
+        int[] tmp = {1, 2, 3, 4, 5};
+        datas = tmp;
+    }
+
+    private static void func() {
+        for (int i = 1; i <= 45; i++) {
+            System.out.println("R.drawable.a" + i + ",");
+        }
     }
 
 

@@ -1,8 +1,6 @@
 package com.zx.seaweatherall.widget;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -36,7 +34,6 @@ import com.zx.seaweatherall.ui.MapFragment;
 import com.zx.seaweatherall.utils.BytesUtil;
 import com.zx.seaweatherall.utils.Tools;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -89,6 +86,7 @@ public class ZoomImageView extends ImageView implements
     //弹出popupwindow的view
     View detailContent;
 
+
     //gps显示部分
     public Locator2 currentLocation = new Locator2(0, 0);//相对于中心点的坐标;
 
@@ -136,7 +134,7 @@ public class ZoomImageView extends ImageView implements
                     }
 
                     //单击确定,用来实现点击指定区域,显示对应区域坐标;
-                    /*@Override
+                    @Override
                     public boolean onSingleTapConfirmed(MotionEvent e) {
                         boolean inFlag = false;
                         float downX = e.getX();
@@ -149,19 +147,20 @@ public class ZoomImageView extends ImageView implements
                             if (Tools.pInQuadrangle(Param.seaAreas2[i], lo)) {
                                 dismissPopupWindow(); //可能存在的情况是:我之前点击了1,正在显示,现在我又点击了2,那么我就让之前的消失掉;
                                 TextView area = (TextView) detailContent.findViewById(R.id.detail_popup_tv_area);
-                                area.setText(Param.AREA_NAME[i]);
+                                /*area.setText(Param.AREA_NAME[i]);
                                 ImageView img = (ImageView) detailContent.findViewById(R.id
-                                .detail_popup_img_weather_type);
+                                        .detail_popup_img_weather_type);
                                 img.setImageBitmap(Param.bitmaps[Param.weaherDetail[i].weatherType]);
                                 TextView tv_type = (TextView) detailContent.findViewById(R.id
-                                .detail_popup_tv_weather_type);
+                                        .detail_popup_tv_weather_type);
                                 tv_type.setText(Param.weatherName[Param.weaherDetail[i].weatherType]);
                                 TextView tv_wind = (TextView) detailContent.findViewById(R.id
-                                .detail_popup_tv_weather_wind);
+                                        .detail_popup_tv_weather_wind);
                                 tv_wind.setText(Param.weaherDetail[i].wind_power);
                                 TextView time = (TextView) detailContent.findViewById(R.id
-                                .detail_popup_tv_weather_time);
-                                time.setText("发布时间:" + BytesUtil.formatTime(Param.weaherDetail[i].time.toCharArray()));
+                                        .detail_popup_tv_weather_time);
+                                time.setText("发布时间:" + BytesUtil.formatTime(Param.weaherDetail[i].time.toCharArray())
+                                );*/
                                 popupWindow = new PopupWindow(detailContent, -2, -2);
                                 //需要注意的是:使用popupwindow,必须设置背景,不然动画效果不能展示
                                 popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -169,19 +168,19 @@ public class ZoomImageView extends ImageView implements
                                 //int[] location = new int[2];
                                 //view.getLocationInWindow(location);
                                 popupWindow.showAtLocation(ZoomImageView.this, Gravity.LEFT + Gravity.TOP, (int) e
-                                .getX(), (int) e.getY());
+                                        .getX(), (int) e.getY());
 
                                 ScaleAnimation animation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation
-                                .RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                                        .RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                                 animation.setDuration(300);
                                 detailContent.startAnimation(animation);
                                 inFlag = true;
                                 //添加语音读功能;
-                                MapFragment.tts.speak(Param.AREA_NAME[i] + Param.seperator +
+                                /*MapFragment.tts.speak(Param.AREA_NAME[i] + Param.seperator +
                                                 Param.weatherName[Param.weaherDetail[i].weatherType] + Param.seperator +
                                                 Param.weaherDetail[i].wind_power + "," + Param.seperator +
                                                 Param.weaherDetail[i].text,
-                                        TextToSpeech.QUEUE_FLUSH, null);
+                                        TextToSpeech.QUEUE_FLUSH, null);*/
                                 break;
                             }
                         }
@@ -190,8 +189,10 @@ public class ZoomImageView extends ImageView implements
                             dismissPopupWindow();
                         }
                         return super.onSingleTapConfirmed(e);
-                    }*/
+                    }
                 });
+
+
     }
 
     private class AutoScaleRunnable implements Runnable {
@@ -588,7 +589,17 @@ public class ZoomImageView extends ImageView implements
 
         //显示天气
         if (weathers != null) {
-
+            for (int i = 1; i < Param.seaAreas2.length; i++) {
+                canvas.drawBitmap(
+                        Param.memoryCache.get(
+                                Param.weatherIcon[weathers[i - 1][0].weatherType1],
+                                Param.weatherIcon[weathers[i - 1][0].weatherType2],
+                                R.drawable.north1,
+                                weathers[i - 1][0].earlyWarning),
+                        rect.centerX() + Param.seaAreaPoint4SHANDONG[i].x * currentScale,
+                        rect.centerY() + Param.seaAreaPoint4SHANDONG[i].y * currentScale,
+                        paint);
+            }
         }
 
         // TODO: 2017/5/31 0031 现在只能把台风画出来，但是最后一个轨迹点的风圈还没画出来；

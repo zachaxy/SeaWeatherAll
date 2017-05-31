@@ -20,6 +20,10 @@ public class WeatherBean extends IMsg implements Serializable {
     //    public String waveHeight;
     public int earlyWarning;    //预警信息；
 
+    public WeatherBean(String timeStamp) {
+        super(timeStamp);
+    }
+
     @Override
     public String getMsgContent() {
         return desc;

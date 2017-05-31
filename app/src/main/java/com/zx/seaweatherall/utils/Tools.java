@@ -7,6 +7,9 @@ import android.util.Log;
 
 import com.zx.seaweatherall.Param;
 import com.zx.seaweatherall.R;
+import com.zx.seaweatherall.bean.Locater;
+import com.zx.seaweatherall.bean.Locator2;
+import com.zx.seaweatherall.bean.SeaArea;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -176,7 +179,7 @@ public class Tools {
      * 当前坐标p,并不是相对中心点的,而是相对于移动端原始view的大小;
      *
      * @return
-     *//*
+     */
     public static boolean pInQuadrangle(SeaArea seaArea, Locater p) {
         double dTriangle = -1;
         if (seaArea.size == 4) {
@@ -221,7 +224,8 @@ public class Tools {
             }
         }
         return 0;
-    }*/
+    }
+
     public static void initMapPic() {
         int index = 0;
         if ((Param.my_authority & 0x01) > 0) {
