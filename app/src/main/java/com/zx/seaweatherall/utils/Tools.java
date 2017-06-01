@@ -201,6 +201,40 @@ public class Tools {
         return 0;
     }*/
 
+
+    /***
+     * 查看p是否在区域中;
+     *
+     * @param seaArea 遍历18个海区;
+     * @param p       当前坐标p,并不是相对中心点的,而是相对于移动端原始view的大小;
+     * @return
+     */
+    public static boolean pInQuadrangle(SeaArea seaArea, Locater p) {
+        double dTriangle = -1;
+        if (seaArea.size == 4) {
+            dTriangle = triangleArea(seaArea.a, seaArea.b, p)
+                    + triangleArea(seaArea.b, seaArea.c, p)
+                    + triangleArea(seaArea.c, seaArea.d, p)
+                    + triangleArea(seaArea.d, seaArea.a, p);
+        } else if (seaArea.size == 5) {
+            dTriangle = triangleArea(seaArea.a, seaArea.b, p)
+                    + triangleArea(seaArea.b, seaArea.c, p)
+                    + triangleArea(seaArea.c, seaArea.d, p)
+                    + triangleArea(seaArea.d, seaArea.e, p)
+                    + triangleArea(seaArea.e, seaArea.a, p);
+        }
+        return dTriangle == seaArea.area;
+    }
+
+    // 返回三个点组成三角形的面积,既然面积这么算最多也就是个double,那么直接传入整数吧;
+    //全部转为整数,所得的面积最多是xxx.5,可以用==精确比对,缺点是:存在各个海区的边界值误差
+    private static double triangleArea(Locater a, Locater b, Locater c) {
+        double result = Math.abs((a.x * b.y + b.x * c.y + c.x * a.y - b.x * a.y
+                - c.x * b.y - a.x * c.y) / 2.0);
+        return result;
+    }
+
+
     public static void initMapPic(Context context) {
         int index = 0;
         if ((Param.my_authority & 0x01) > 0) {

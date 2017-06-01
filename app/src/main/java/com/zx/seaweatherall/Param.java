@@ -188,8 +188,6 @@ public class Param {
     public static final int SHANDONG_FAR_SEA_AREA_COUNT = 18;
 
 
-
-
     //茂名
     public static final int MAOMING_FAR_AREA_COUNT = 18;
     public static final int MAOMING_NEAR_AREA_COUNT = 10;
@@ -233,6 +231,7 @@ public class Param {
     public static ArrayList<Integer> MAP_PIC = new ArrayList<>();
     //使用场景，如果接受到某一地点的气象，需要切换到对应地图，索引为地区（SHANDONG_0。。。），值为ViewPager中的position；
     public static HashMap<Integer, Integer> map2position = new HashMap<>();
+    //使用场景，key：SHANDONG0,value: SeaBean；
     public static HashMap<Integer, SeaBean> map2SeaBean = new HashMap<>();
 
 
@@ -287,9 +286,12 @@ public class Param {
                     12397.5),
             new SeaArea(new Locater(213, 557), new Locater(73, 753), new Locater(314, 753), new Locater(314, 557),
                     33516.0),
-            new SeaArea(new Locater(314, 557), new Locater(314, 753), new Locater(520, 753), new Locater(442, 557), 32732.0),
+            new SeaArea(new Locater(314, 557), new Locater(314, 753), new Locater(520, 753), new Locater(442, 557),
+            32732.0),
     };*/
 
     //缓存图标类,避免内存溢出
-    public static BitmapLruCache memoryCache = BitmapLruCache.getCache();
+//    public static BitmapLruCache memoryCache = BitmapLruCache.getCache();
+
+    public static final String seperator = ",";
 }

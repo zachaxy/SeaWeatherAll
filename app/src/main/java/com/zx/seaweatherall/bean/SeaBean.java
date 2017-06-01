@@ -208,6 +208,7 @@ public class SeaBean {
         weathers = (WeatherBean[][]) aCache.getAsObject("weather" + id);
     }
 
+    //这个区域比较特别，因为不需要区域显示，而是图标全显示，手指点击图标弹出具体信息；
     void initMAOMING1() {
         Locater[] locators0 = {
                 new Locater(0, 0),

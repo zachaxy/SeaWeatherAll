@@ -22,9 +22,33 @@
 
 
     <ImageView
-        android:id="@+id/detail_popup_img_weather_type"
+        android:id="@+id/detail_popup_img_weather_type1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/detail_popup_img_divider1"
+        tools:background="@drawable/w1"/>
+
+    <ImageView
+        android:id="@+id/detail_popup_img_weather_type2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/detail_popup_img_divider1"
+        android:layout_toRightOf="@id/detail_popup_img_weather_type1"
+        tools:background="@drawable/w1"/>
+
+    <ImageView
+        android:id="@+id/detail_popup_img_weather_type3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/detail_popup_img_weather_type2"
+        android:layout_below="@id/detail_popup_img_divider1"
+        tools:background="@drawable/w1"/>
+
+    <ImageView
+        android:id="@+id/detail_popup_img_weather_type4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/detail_popup_img_weather_type3"
         android:layout_below="@id/detail_popup_img_divider1"
         tools:background="@drawable/w1"/>
 
@@ -32,16 +56,15 @@
         android:id="@+id/detail_popup_tv_weather_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/detail_popup_img_divider1"
-        android:layout_toRightOf="@id/detail_popup_img_weather_type"
+        android:layout_below="@id/detail_popup_img_weather_type1"
         android:textSize="30sp"
-        tools:text="当前气温："/>
+        tools:text="天气类型："/>
 
     <TextView
         android:id="@+id/detail_popup_tv_weather_wind"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/detail_popup_img_weather_type"
+        android:layout_below="@id/detail_popup_tv_weather_type"
         android:textSize="30sp"
         tools:text="风力风向："/>
 

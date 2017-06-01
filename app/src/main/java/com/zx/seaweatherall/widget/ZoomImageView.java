@@ -28,11 +28,14 @@ import com.zx.seaweatherall.Param;
 import com.zx.seaweatherall.R;
 import com.zx.seaweatherall.bean.Locater;
 import com.zx.seaweatherall.bean.Locator2;
+import com.zx.seaweatherall.bean.SeaArea;
 import com.zx.seaweatherall.bean.SeaBean;
 import com.zx.seaweatherall.bean.TyphoonBean;
 import com.zx.seaweatherall.bean.WeatherBean;
 import com.zx.seaweatherall.ui.MapFragment;
+import com.zx.seaweatherall.utils.BitmapLruCache;
 import com.zx.seaweatherall.utils.BytesUtil;
+import com.zx.seaweatherall.utils.SingleBitmapLruCache;
 import com.zx.seaweatherall.utils.Tools;
 
 import java.util.ArrayList;
@@ -135,7 +138,7 @@ public class ZoomImageView extends ImageView implements
                     }
 
                     //单击确定,用来实现点击指定区域,显示对应区域坐标;
-                    /*@Override
+                    @Override
                     public boolean onSingleTapConfirmed(MotionEvent e) {
                         boolean inFlag = false;
                         float downX = e.getX();
@@ -143,54 +146,75 @@ public class ZoomImageView extends ImageView implements
                         //将按下的点坐标转换成int类型的,用来计算区域吧;
                         Locater lo = getOrignalLocation(downX, downY);
 
-                        //遍历18个区域,看是落在哪个区域中;
-                        for (int i = 0; i < Param.seaAreas2.length; i++) {
-                            if (Tools.pInQuadrangle(Param.seaAreas2[i], lo)) {
-                                dismissPopupWindow(); //可能存在的情况是:我之前点击了1,正在显示,现在我又点击了2,那么我就让之前的消失掉;
-                                TextView area = (TextView) detailContent.findViewById(R.id.detail_popup_tv_area);
-                                *//*area.setText(Param.AREA_NAME[i]);
-                                ImageView img = (ImageView) detailContent.findViewById(R.id
-                                        .detail_popup_img_weather_type);
-                                img.setImageBitmap(Param.bitmaps[Param.weaherDetail[i].weatherType]);
-                                TextView tv_type = (TextView) detailContent.findViewById(R.id
-                                        .detail_popup_tv_weather_type);
-                                tv_type.setText(Param.weatherName[Param.weaherDetail[i].weatherType]);
-                                TextView tv_wind = (TextView) detailContent.findViewById(R.id
-                                        .detail_popup_tv_weather_wind);
-                                tv_wind.setText(Param.weaherDetail[i].wind_power);
-                                TextView time = (TextView) detailContent.findViewById(R.id
-                                        .detail_popup_tv_weather_time);
-                                time.setText("发布时间:" + BytesUtil.formatTime(Param.weaherDetail[i].time.toCharArray())
-                                );*//*
-                                popupWindow = new PopupWindow(detailContent, -2, -2);
-                                //需要注意的是:使用popupwindow,必须设置背景,不然动画效果不能展示
-                                popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                //传入一个长度为2的数组,将返回该view距离屏幕x,y的距离
-                                //int[] location = new int[2];
-                                //view.getLocationInWindow(location);
-                                popupWindow.showAtLocation(ZoomImageView.this, Gravity.LEFT + Gravity.TOP, (int) e
-                                        .getX(), (int) e.getY());
+                        if (Param.CURRENT_POSITION == Param.MAOMING_1) {
 
-                                ScaleAnimation animation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation
-                                        .RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                                animation.setDuration(300);
-                                detailContent.startAnimation(animation);
-                                inFlag = true;
-                                //添加语音读功能;
-                                *//*MapFragment.tts.speak(Param.AREA_NAME[i] + Param.seperator +
-                                                Param.weatherName[Param.weaherDetail[i].weatherType] + Param.seperator +
-                                                Param.weaherDetail[i].wind_power + "," + Param.seperator +
-                                                Param.weaherDetail[i].text,
-                                        TextToSpeech.QUEUE_FLUSH, null);*//*
-                                break;
+                        } else {
+                            SeaBean seaBean = Param.map2SeaBean.get(Param.CURRENT_POSITION);
+                            SeaArea[] seaAreas = seaBean.seaAreas;
+                            for (int i = 1; i < seaAreas.length; i++) {
+                                if (Tools.pInQuadrangle(seaAreas[i], lo)) {
+                                    dismissPopupWindow(); //可能存在的情况是:我之前点击了1,正在显示,现在我又点击了2,那么我就让之前的消失掉;
+                                    TextView area = (TextView) detailContent.findViewById(R.id.detail_popup_tv_area);
+                                    area.setText(seaBean.areaNames[i]);
+                                    ImageView img1 = (ImageView) detailContent.findViewById(R.id
+                                            .detail_popup_img_weather_type1);
+                                    img1.setImageBitmap(SingleBitmapLruCache.getCache()
+                                            .get(seaBean.weathers[i][0].weatherType1));
+                                    ImageView img2 = (ImageView) detailContent.findViewById(R.id
+                                            .detail_popup_img_weather_type2);
+                                    img2.setImageBitmap(SingleBitmapLruCache.getCache().get(seaBean.weathers[i][0]
+                                            .weatherType2));
+                                    ImageView img3 = (ImageView) detailContent.findViewById(R.id
+                                            .detail_popup_img_weather_type3);
+                                    img3.setImageBitmap(SingleBitmapLruCache.getCache().get(R.drawable.north1));
+                                    ImageView img4 = (ImageView) detailContent.findViewById(R.id
+                                            .detail_popup_img_weather_type4);
+                                    img4.setImageBitmap(SingleBitmapLruCache.getCache().get(seaBean.weathers[i][0]
+                                            .earlyWarning));
+                                    TextView tv_type = (TextView) detailContent.findViewById(R.id
+                                            .detail_popup_tv_weather_type);
+                                    tv_type.setText(Param.weatherName[seaBean.weathers[i][0].weatherType1] + "转" +
+                                            Param.weatherName[seaBean.weathers[i][0].weatherType2]);
+                                    TextView tv_wind = (TextView) detailContent.findViewById(R.id
+                                            .detail_popup_tv_weather_wind);
+                                    tv_wind.setText(seaBean.weathers[i][0].desc);
+                                    TextView time = (TextView) detailContent.findViewById(R.id
+                                            .detail_popup_tv_weather_time);
+                                    time.setText("发布时间:" + BytesUtil.formatTime(seaBean.weathers[i][0].timeStamp
+                                            .toCharArray())
+                                    );
+                                    popupWindow = new PopupWindow(detailContent, -2, -2);
+                                    //需要注意的是:使用popupwindow,必须设置背景,不然动画效果不能展示
+                                    popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                    //传入一个长度为2的数组,将返回该view距离屏幕x,y的距离
+                                    //int[] location = new int[2];
+                                    //view.getLocationInWindow(location);
+                                    popupWindow.showAtLocation(ZoomImageView.this, Gravity.LEFT + Gravity.TOP, (int) e
+                                            .getX(), (int) e.getY());
+
+                                    ScaleAnimation animation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation
+                                            .RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                                    animation.setDuration(300);
+                                    detailContent.startAnimation(animation);
+                                    inFlag = true;
+                                    //添加语音读功能;
+                                   /* MapFragment.tts.speak(Param.AREA_NAME[i] + Param.seperator +
+                                                    Param.weatherName[Param.weaherDetail[i].weatherType] + Param
+                                                    .seperator +
+                                                    Param.weaherDetail[i].wind_power + "," + Param.seperator +
+                                                    Param.weaherDetail[i].text,
+                                            TextToSpeech.QUEUE_FLUSH, null);*/
+                                    break;
+                                }
                             }
                         }
+
 
                         if (!inFlag) { //如果是其他区域,那么也将这个windown取消掉;
                             dismissPopupWindow();
                         }
                         return super.onSingleTapConfirmed(e);
-                    }*/
+                    }
                 });
 
 
@@ -595,11 +619,11 @@ public class ZoomImageView extends ImageView implements
 
             for (int i = 1; i < bean.seaAreas.length; i++) {
                 canvas.drawBitmap(
-                        Param.memoryCache.get(
-                                Param.weatherIcon[ws[i - 1][0].weatherType1],
-                                Param.weatherIcon[ws[i - 1][0].weatherType2],
+                        BitmapLruCache.getCache().get(
+                                Param.weatherIcon[ws[i][0].weatherType1],
+                                Param.weatherIcon[ws[i][0].weatherType2],
                                 R.drawable.north1,
-                                ws[i - 1][0].earlyWarning),
+                                ws[i][0].earlyWarning),
                         rect.centerX() + bean.locaters[i].x * currentScale,
                         rect.centerY() + bean.locaters[i].y * currentScale,
                         paint);
